@@ -2,25 +2,20 @@ package main
 
 import (
 	"fmt"
-	"encoding/json"
-	"log"
-	"net/http"
-
 )
 
 func main(){
-
-	/*List := ListaDoblementeEnlazada{}
-	node1:= &nodo{Dato: Tienda{nombre: "nodo1"}}
-	node2:= &nodo{Dato: Tienda{nombre: "nodo2"}}
-	node3:= &nodo{Dato: Tienda{nombre: "nodo3"}}
-	node4:= &nodo{Dato: Tienda{nombre: "nodo4"}}
+	List := ListaDoblementeEnlazada{}
+	node1:= &Nodo{Dato: Tienda{nombre: "nodo1"}}
+	node2:= &Nodo{Dato: Tienda{nombre: "nodo2"}}
+	node3:= &Nodo{Dato: Tienda{nombre: "nodo3"}}
+	node4:= &Nodo{Dato: Tienda{nombre: "nodo4"}}
 	List.AgregarAlFinal(node1)
 	List.AgregarAlFinal(node2)
 	List.AgregarAlFinal(node3)
 	List.AgregarAlFinal(node4)
 	List.Eliminar("nodo6")
-	List.Imprimir()*/
+	List.Imprimir()
 }
 
 //Tipo tienda, tiene todos los atributos de las tiendas
@@ -31,20 +26,20 @@ type Tienda struct {
 	calificacion int
 }
 //Nodo, es utilizado para la lista doblemente enlazada
-type nodo struct {
-	anterior,siguiente *nodo
+type Nodo struct {
+	anterior,siguiente *Nodo
 	Dato Tienda
 }
 
 //Lista doblemente enlazada, contiene todas las tiendas que se encuentren dentro
 //de la misma sección y mismo puntaje
 type ListaDoblementeEnlazada struct {
-	cabeza, cola *nodo
+	cabeza, cola *Nodo
 	tamano int
 }
 
 //Función que permite agregar las tiendas a la lista doblemente enlazada
-func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(n *nodo) {
+func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(n *Nodo) {
 	if Lista.tamano == 0{
 		Lista.cabeza = n
 		Lista.cola = n
@@ -58,7 +53,7 @@ func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(n *nodo) {
 }
 
 //Función que permite agregar las tiendas a la lista doblemente enlazada
-func (Lista *ListaDoblementeEnlazada)AgregarAlFinal(n *nodo){
+func (Lista *ListaDoblementeEnlazada)AgregarAlFinal(n *Nodo){
 	if Lista.tamano == 0 {
 		Lista.cabeza = n
 		Lista.cola = n

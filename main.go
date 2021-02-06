@@ -1,100 +1,63 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
+	"log"
+	"net/http"
+	"github.com/gorilla/mux"
+	//"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 )
 
-func main(){
-	List := ListaDoblementeEnlazada{}
-	node1:= &Nodo{Dato: Tienda{nombre: "nodo1"}}
-	node2:= &Nodo{Dato: Tienda{nombre: "nodo2"}}
-	node3:= &Nodo{Dato: Tienda{nombre: "nodo3"}}
-	node4:= &Nodo{Dato: Tienda{nombre: "nodo4"}}
-	List.AgregarAlFinal(node1)
-	List.AgregarAlFinal(node2)
-	List.AgregarAlFinal(node3)
-	List.AgregarAlFinal(node4)
-	List.Eliminar("nodo6")
-	List.Imprimir()
+//Struct con una variable dentro
+type Response struct {
+	//el json:"respuesta", establece la manera en la cual se construira el json.
+	Respuesta string `json:"respuesta"`
 }
 
-//Tipo tienda, tiene todos los atributos de las tiendas
-type Tienda struct {
-	nombre string
-	descripcion string
-	contacto string
-	calificacion int
-}
-//Nodo, es utilizado para la lista doblemente enlazada
-type Nodo struct {
-	anterior,siguiente *Nodo
-	Dato Tienda
+//Struct con dos variables dentro
+type Informacion struct {
+	//El omitempty ignora el valor si viene vacio.
+	Nombre string `json:"nombre,omitempty"`
+	NumeroFavorito int32 `json:"favorito,omitempty"`
 }
 
-//Lista doblemente enlazada, contiene todas las tiendas que se encuentren dentro
-//de la misma sección y mismo puntaje
-type ListaDoblementeEnlazada struct {
-	cabeza, cola *Nodo
-	tamano int
+//Creación de variable para uso dentro de los gets y posts
+var Datos Informacion
+
+//Función que devuelve un texto en formato JSON
+func HelloWorld(w http.ResponseWriter, req *http.Request) {
+	//Variable de tipo Response, el cual es un struct
+	var res Response
+	//Asignacion del valor
+	res.Respuesta="Hello World"
+
+	json.NewEncoder(w).Encode(res)
 }
 
-//Función que permite agregar las tiendas a la lista doblemente enlazada
-func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(n *Nodo) {
-	if Lista.tamano == 0{
-		Lista.cabeza = n
-		Lista.cola = n
-	}else{
-		aux := Lista.cabeza
-		Lista.cabeza = n
-		aux.anterior = Lista.cabeza
-		Lista.cabeza.siguiente = aux
-	}
-	Lista.tamano ++
+//Función que devuelve una variable en formato JSON
+func GetData(w http.ResponseWriter, req *http.Request) {
+	//Obtencion de parametros del POST
+	json.NewEncoder(w).Encode(Datos)
 }
 
-//Función que permite agregar las tiendas a la lista doblemente enlazada
-func (Lista *ListaDoblementeEnlazada)AgregarAlFinal(n *Nodo){
-	if Lista.tamano == 0 {
-		Lista.cabeza = n
-		Lista.cola = n
-	}else{
-		aux := Lista.cola
-		Lista.cola = n
-		aux.siguiente = Lista.cola
-		Lista.cola.anterior = aux
-	}
-	Lista.tamano ++
+//Función que establece el valor de una variable
+func SetData(w http.ResponseWriter, req *http.Request) {
+	_ = json.NewDecoder(req.Body).Decode(&Datos)
+	json.NewEncoder(w).Encode("Recibido")
 }
 
-//Permite eliminar tiendas del sistema
-func (Lista *ListaDoblementeEnlazada) Eliminar(valor string){
-	if Lista.cabeza.Dato.nombre == valor{
-		Lista.cabeza = Lista.cabeza.siguiente
-	} else if Lista.cola.Dato.nombre == valor{
-		Lista.cola = Lista.cola.anterior
-	}else{
-		auxiliar := Lista.cabeza
-		for auxiliar.siguiente.Dato.nombre != valor{
-			auxiliar = auxiliar.siguiente
-			if auxiliar.siguiente == nil{
-				fmt.Println("El valor a eliminar no existe")
-				return
-			}
-		}
-		auxiliar.siguiente = auxiliar.siguiente.siguiente
-	}
-	Lista.tamano --
-}
+func main() {
+	//Creacion y asignación corta de un nuevo enrutador denominado router
+	router := mux.NewRouter()
 
-func (Lista ListaDoblementeEnlazada) Imprimir(){
-	toPrint := Lista.cabeza
-	if Lista.tamano == 0{
-		fmt.Println("No hay Tienda")
-		return
-	}
-	for Lista.tamano != 0 {
-		fmt.Println(toPrint.Dato.nombre)
-		toPrint = toPrint.siguiente
-		Lista.tamano --
-	}
+	//Endpoints
+	router.HandleFunc("/getHello", HelloWorld).Methods("GET")
+
+	router.HandleFunc("/getData", GetData).Methods("GET")
+
+	router.HandleFunc("/setData", SetData).Methods("POST")
+
+	//El listenandserve, crea el servidor en el puerto que se establece, siendo en este caso el puerto 7700
+	//El log.Fatal se utiliza para visualizar si ocurre un error al iniciar el servidor
+	log.Fatal(http.ListenAndServe(":7000", router))
 }

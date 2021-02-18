@@ -1,15 +1,14 @@
 package AdminJSON
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
+	"io"
 	"log"
 	"os"
 )
-
-//Tipo departamento, contiene el nombre del departamento y las tiendas que se encuentran dentro
-//del el
 
 //Tipo datos indices, contiene el indice y los departamentos que se encuentran dentro de el
 type Datos_Indices struct {
@@ -22,114 +21,18 @@ type DB_VirtualMall struct {
 	Datos []Datos_Indices
 }
 
-//Metodo de lectura del archivo JSON
-func DecoderJSON(RutaArchivo string){
-	f, err := os.Open(RutaArchivo)
-	if nil != err{
-		log.Fatalln(err)
-	}
-	defer f.Close()
-	dec := json.NewDecoder(f)
-	db:= DB_VirtualMall{}
-	dec.Decode(&db)
-	Linealizacion(db)
-}
-
-func UnmarshallJSON(JSON string){
-
-	Json := `{
-  "Datos": [{
-    "Indice": "A",
-    "Departamentos": [{
-      "Deportes": [{
-        "Nombre": "Aurora",
-        "Descripcion": "Es una empresa multinacional estadounidense dedicada al diseño, desarrollo, fabricación y comercialización de equipamiento deportivo: balones, calzado, ropa, equipo, accesorios y otros artículos deportivos",
-        "Contacto": "5544-3377",
-        "Calificacion": 5
-      },
-        {
-          "Nombre": "Amador",
-          "Descripcion": "es una empresa alemana fabricante de accesorios, ropa y calzado deportivo, cuya sede central está en Herzogenaurach, Alemania",
-          "Contacto": "5588-9988",
-          "Calificacion": 4
-        },
-        {
-          "Nombre": "Armados",
-          "Descripcion": "Equipo extremo",
-          "Contacto": "8995222",
-          "Calificacion": 5
-        }
-      ]
-    },
-      {
-        "Comida": [{
-          "Nombre": "A comer todo",
-          "Descripcion": "todo lo que puedan pedir por un dollar",
-          "Contacto": "559999",
-          "Calificacion": 5
-        }]
-      },
-      {
-        "Celulares": []
-      }
-    ]
-  },
-    {
-      "Indice": "B",
-      "Departamentos": [{
-        "Deportes": []
-      },
-        {
-          "Comida": []
-        },
-        {
-          "Celulares": [{
-            "Nombre": "Bayoneta",
-            "Descripcion": "Telefonos militares",
-            "Contacto": "bayoneta@gmail.com",
-            "Calificacion": 5
-          }]
-        }
-      ]
-    }
-  ]
-}`
-	var db DB_VirtualMall
-	json.Unmarshal([]byte(Json), &db)
-
-	for i:=0; i<len(db.Datos);i++{
-		for j:=0; j<len(db.Datos[i].Departamentos);j++{
-			for key, value := range db.Datos[i].Departamentos[j]{
-				fmt.Println(key, value)
-				for ke, valu := range value{
-					fmt.Println(ke, valu)
-
-				}
-			}
-		}
-	}
-}
-
 //Funcion de escritura del archivo JSON
-func EncoderJson(){
-	/*Tiendas := []ListaDoblementeEnlazada.Tienda{{Nombre: "Aurora", Descripcion: "Es una empresa multinacional " +
-		"estadounidense dedicada al diseño, desarrollo, fabricación y comercialización " +
-		"de equipamiento deportivo: balones, calzado, ropa, equipo, accesorios y otros " +
-		"artículos deportivos", Contacto: "5544-3377", Calificacion: 5}}
-
-	Departamentos := []Departamento{{Nombre: "Deportes", Tiendas: Tiendas}}
-	Datos2 := []Datos_Indices{{Indice: "A", Departamentos: Departamentos}}
-	DB := DB_VirtualMall{Datos: Datos2}
+func EncoderJson(db DB_VirtualMall){
 	//Encoder
 	var buf = new (bytes.Buffer)
 	enc := json.NewEncoder(buf)
-	enc.Encode(DB)
-	f, err := os.Create("user.db.json")
+	enc.Encode(db)
+	f, err := os.Create("Tiendas.json")
 	if nil != err{
 		log.Fatalln(err)
 	}
 	defer f.Close()
-	io.Copy(f, buf)*/
+	io.Copy(f, buf)
 }
 
 //Metodo de obtencion de tamaño de departamentos y mapa departamentos

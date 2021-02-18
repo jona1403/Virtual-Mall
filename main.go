@@ -2,62 +2,54 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
+	"github.com/gorilla/mux"
+	"log"
+	"io/ioutil"
 	"net/http"
 	//"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 )
+var db AdminJSON.DB_VirtualMall
 
-//Struct con una variable dentro
-type Response struct {
-	//el json:"respuesta", establece la manera en la cual se construira el json.
-	Respuesta string `json:"respuesta"`
+func getJSON(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(db)
 }
 
-//Struct con dos variables dentro
-type Informacion struct {
-	//El omitempty ignora el valor si viene vacio.
-	Nombre string `json:"nombre,omitempty"`
-	NumeroFavorito int32 `json:"favorito,omitempty"`
+func setJSON(w http.ResponseWriter, r *http.Request){
+	Tiendas, err := ioutil.ReadAll(r.Body)
+	if err != nil{
+		fmt.Fprintf(w, "Datos no validos")
+	}
+	json.Unmarshal([]byte(Tiendas), &db)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	AdminJSON.EncoderJson(db)
+	json.NewEncoder(w).Encode("Datos cargados")
 }
 
-//Creación de variable para uso dentro de los gets y posts
-var Datos Informacion
-
-//Función que devuelve un texto en formato JSON
-func HelloWorld(w http.ResponseWriter, req *http.Request) {
-	//Variable de tipo Response, el cual es un struct
-	var res Response
-	//Asignacion del valor
-	res.Respuesta="Hello World"
-
-	json.NewEncoder(w).Encode(res)
+func saveJSON(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode("Datos Guardados")
 }
 
-//Función que devuelve una variable en formato JSON
-func GetData(w http.ResponseWriter, req *http.Request) {
-	//Obtencion de parametros del POST
-	json.NewEncoder(w).Encode(Datos)
+func getArreglo(w http.ResponseWriter, r *http.Request){
+	json.NewEncoder(w).Encode("Arreglo creado exitosamente")
 }
 
-//Función que establece el valor de una variable
-func SetData(w http.ResponseWriter, req *http.Request) {
-	_ = json.NewDecoder(req.Body).Decode(&Datos)
-	json.NewEncoder(w).Encode("Recibido")
+func Eliminar(w http.ResponseWriter, r *http.Request){
+	json.NewEncoder(w).Encode("Tienda eliminada")
 }
 
 func main() {
-	AdminJSON.DecoderJSON("Prueba.json")
-	/*//Creacion y asignación corta de un nuevo enrutador denominado router
 	router := mux.NewRouter()
+	router.HandleFunc("/cargartienda", setJSON).Methods("POST")
+	router.HandleFunc("/Tiendas", getJSON).Methods("GET")
+	router.HandleFunc("/guardar", saveJSON).Methods("GET")
+	router.HandleFunc("/getArreglo", getArreglo).Methods("GET")
+	router.HandleFunc("/Eliminar", Eliminar).Methods("DELETE")
 
-	//Endpoints
-	router.HandleFunc("/getHello", HelloWorld).Methods("GET")
-
-	router.HandleFunc("/getData", GetData).Methods("GET")
-
-	router.HandleFunc("/setData", SetData).Methods("POST")
-
-	//El listenandserve, crea el servidor en el puerto que se establece, siendo en este caso el puerto 7700
-	//El log.Fatal se utiliza para visualizar si ocurre un error al iniciar el servidor
-	log.Fatal(http.ListenAndServe(":7000", router))*/
+	log.Fatal(http.ListenAndServe(":3000", router))
 }

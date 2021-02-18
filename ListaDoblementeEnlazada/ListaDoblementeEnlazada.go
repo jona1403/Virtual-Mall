@@ -73,6 +73,26 @@ func (Lista *ListaDoblementeEnlazada) Eliminar(valor string){
 	Lista.tamano --
 }
 
+//Funcion buscar
+func (Lista *ListaDoblementeEnlazada) Search(valor string) (bool){
+	if Lista.cabeza.Dato.Nombre == valor{
+		return true
+	} else if Lista.cola.Dato.Nombre == valor{
+		return true
+	}else{
+		auxiliar := Lista.cabeza
+		for auxiliar.siguiente.Dato.Nombre != valor{
+			auxiliar = auxiliar.siguiente
+			if auxiliar.siguiente == nil{
+				fmt.Println("El valor a eliminar no existe")
+				return false
+			}
+		}
+		return true
+	}
+}
+
+
 //Funcion para la imporesion de nodos
 func (Lista ListaDoblementeEnlazada) Imprimir(){
 	toPrint := Lista.cabeza

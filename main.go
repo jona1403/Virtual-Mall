@@ -2,9 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"log"
+	"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 	"net/http"
-	"github.com/gorilla/mux"
 	//"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 )
 
@@ -47,7 +46,8 @@ func SetData(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	//Creacion y asignación corta de un nuevo enrutador denominado router
+	AdminJSON.DecoderJSON("Prueba.json")
+	/*//Creacion y asignación corta de un nuevo enrutador denominado router
 	router := mux.NewRouter()
 
 	//Endpoints
@@ -59,5 +59,5 @@ func main() {
 
 	//El listenandserve, crea el servidor en el puerto que se establece, siendo en este caso el puerto 7700
 	//El log.Fatal se utiliza para visualizar si ocurre un error al iniciar el servidor
-	log.Fatal(http.ListenAndServe(":7000", router))
+	log.Fatal(http.ListenAndServe(":7000", router))*/
 }

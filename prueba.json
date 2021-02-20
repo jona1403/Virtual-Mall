@@ -19,6 +19,18 @@
           "Descripcion": "Equipo extremo",
           "Contacto": "8995222",
           "Calificacion": 5
+        },
+        {
+          "Nombre": "Armour",
+          "Descripcion": "Tienda",
+          "Contacto": "8995222",
+          "Calificacion": 2
+        },
+        {
+          "Nombre": "Alexander",
+          "Descripcion": "Tienda ropa",
+          "Contacto": "8995222",
+          "Calificacion": 5
         }
       ]
     },

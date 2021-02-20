@@ -56,11 +56,8 @@ func eliminar(w http.ResponseWriter, r *http.Request){
 	if key != -1{
 		aux = getKeyLetra(tienda.Nombre)
 		if aux != -1{
-			fmt.Println("Aqui va sin eliminar")
-			lista[key+len(departamentos)*(aux+27*(tienda.Calificacion-1))].Imprimir()
+			del(tienda)
 			lista[key+len(departamentos)*(aux+27*(tienda.Calificacion-1))].Eliminar(tienda.Nombre)
-			fmt.Println("Aqui va eliminado")
-			lista[key+len(departamentos)*(aux+27*(tienda.Calificacion-1))].Imprimir()
 			json.NewEncoder(w).Encode("OK")
 		}
 	}else{
@@ -94,6 +91,7 @@ func getTiendaEspecifica(w http.ResponseWriter, r *http.Request){
 func saveJSON(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	AdminJSON.EncoderJson(db)
 	json.NewEncoder(w).Encode("Datos Guardados")
 }
 
@@ -107,7 +105,7 @@ func main() {
 	router.HandleFunc("/Eliminar", eliminar).Methods("DELETE")
 	//Funcional
 	router.HandleFunc("/TiendaEspecifica", getTiendaEspecifica).Methods("POST")
-	//no Funcional
+	//Funcional
 	router.HandleFunc("/guardar", saveJSON).Methods("GET")
 	//no Funcional
 	router.HandleFunc("/getArreglo", getArreglo).Methods("GET")
@@ -138,10 +136,41 @@ func getKeyLetra(nombre string) int {
 	return -1
 }
 
-func reLinealizar(){
+
+func del(tienda ListaDoblementeEnlazada.TiendaEliminar){
+	var ListaVacia []ListaDoblementeEnlazada.Tienda
+	var Encontrada bool
+	var index int
+	var departamento string
+	for i:=0; i<len(db.Datos);i++{
+		for j:=0; j<len(db.Datos[i].Departamentos);j++{
+			for key, value := range db.Datos[i].Departamentos[j]{
+				for a, valu := range value{
+					if valu.Nombre == tienda.Nombre && valu.Calificacion == tienda.Calificacion && key == tienda.Categoria{
+						Encontrada = true
+						index = a
+						departamento = key
+					}
+				}
+			}
+			if Encontrada {
+				if len(db.Datos[i].Departamentos[j][departamento]) == 1{
+					db.Datos[i].Departamentos[j][departamento] = ListaVacia
+
+				}else{
+					db.Datos[i].Departamentos[j][departamento] = append(db.Datos[i].Departamentos[j][departamento][:index], db.Datos[i].Departamentos[j][departamento][index+1:]...)
+				}
+				return
+			}
+		}
+	}
+}
+
+/*func reLinealizar(){
 	//var base AdminJSON.DB_VirtualMall
 	//var Indice string
 	//var runes []rune
+	var mapaIndices map[(string)int]
 	MatrizTiendas := make([][][]ListaDoblementeEnlazada.ListaDoblementeEnlazada, len(departamentos))
 	for i := range MatrizTiendas {
 		MatrizTiendas[i] = make([][]ListaDoblementeEnlazada.ListaDoblementeEnlazada, 27)
@@ -159,4 +188,13 @@ func reLinealizar(){
 		}
 	}
 
-}
+	for i:=0; i < len(departamentos); i++{
+		for j:=0; j < 27; j++{
+			for k:=0; k < 5; k++{
+				db.Datos[i].i
+				MatrizTiendas[i][j][k] = lista[i+len(departamentos)*(j+27*k)]
+			}
+		}
+	}
+
+}*/

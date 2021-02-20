@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
+	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
 	"github.com/gorilla/mux"
 	"log"
 	"io/ioutil"
@@ -11,12 +12,16 @@ import (
 	//"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 )
 var db AdminJSON.DB_VirtualMall
+var lista []ListaDoblementeEnlazada.ListaDoblementeEnlazada
+var departamentos map[int]string
 
+//Muestra de datos
 func getJSON(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(db)
 }
 
+//Carga de datos
 func setJSON(w http.ResponseWriter, r *http.Request){
 	Tiendas, err := ioutil.ReadAll(r.Body)
 	if err != nil{
@@ -25,31 +30,133 @@ func setJSON(w http.ResponseWriter, r *http.Request){
 	json.Unmarshal([]byte(Tiendas), &db)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	AdminJSON.EncoderJson(db)
+	lista, departamentos = AdminJSON.Linealizacion(db)
+
 	json.NewEncoder(w).Encode("Datos cargados")
 }
 
+//Obtencion de arreglo grafico
+func getArreglo(w http.ResponseWriter, r *http.Request){
+	AdminJSON.Graficar(lista)
+	json.NewEncoder(w).Encode("Grafica generada")
+}
+
+//Elimia un elemento
+func eliminar(w http.ResponseWriter, r *http.Request){
+	var aux int
+	var tienda ListaDoblementeEnlazada.TiendaEliminar
+	Tienda, err := ioutil.ReadAll(r.Body)
+	if err != nil{
+		fmt.Fprintf(w, "Datos no validos")
+	}
+	json.Unmarshal([]byte(Tienda), &tienda)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	key := AdminJSON.KeyDepto(departamentos, tienda.Categoria)
+	if key != -1{
+		aux = getKeyLetra(tienda.Nombre)
+		if aux != -1{
+			fmt.Println("Aqui va sin eliminar")
+			lista[key+len(departamentos)*(aux+27*(tienda.Calificacion-1))].Imprimir()
+			lista[key+len(departamentos)*(aux+27*(tienda.Calificacion-1))].Eliminar(tienda.Nombre)
+			fmt.Println("Aqui va eliminado")
+			lista[key+len(departamentos)*(aux+27*(tienda.Calificacion-1))].Imprimir()
+			json.NewEncoder(w).Encode("OK")
+		}
+	}else{
+		json.NewEncoder(w).Encode("Departamento no existente")
+	}
+}
+
+//Obtiene tienda mediante parametros departamento, nombre y calificacion
+func getTiendaEspecifica(w http.ResponseWriter, r *http.Request){
+	var aux int
+	var tienda ListaDoblementeEnlazada.TiendaIntroducida
+	Tienda, err := ioutil.ReadAll(r.Body)
+	if err != nil{
+		fmt.Fprintf(w, "Datos no validos")
+	}
+	json.Unmarshal([]byte(Tienda), &tienda)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	key := AdminJSON.KeyDepto(departamentos, tienda.Departamento)
+	if key != -1{
+		aux = getKeyLetra(tienda.Nombre)
+		if aux != -1{
+			json.NewEncoder(w).Encode(lista[key+len(departamentos)*(aux+27*(tienda.Calificacion-1))].Buscar(tienda))
+		}
+	}else{
+		json.NewEncoder(w).Encode("Departamento no existente")
+	}
+}
+
+//Generar JSON
 func saveJSON(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode("Datos Guardados")
 }
 
-func getArreglo(w http.ResponseWriter, r *http.Request){
-	json.NewEncoder(w).Encode("Arreglo creado exitosamente")
-}
-
-func Eliminar(w http.ResponseWriter, r *http.Request){
-	json.NewEncoder(w).Encode("Tienda eliminada")
-}
-
 func main() {
 	router := mux.NewRouter()
+	//Funcional
 	router.HandleFunc("/cargartienda", setJSON).Methods("POST")
+	//Funcional
 	router.HandleFunc("/Tiendas", getJSON).Methods("GET")
+	//Funcional
+	router.HandleFunc("/Eliminar", eliminar).Methods("DELETE")
+	//Funcional
+	router.HandleFunc("/TiendaEspecifica", getTiendaEspecifica).Methods("POST")
+	//no Funcional
 	router.HandleFunc("/guardar", saveJSON).Methods("GET")
+	//no Funcional
 	router.HandleFunc("/getArreglo", getArreglo).Methods("GET")
-	router.HandleFunc("/Eliminar", Eliminar).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":3000", router))
+}
+
+//Obtencion de llave de letra
+func getKeyLetra(nombre string) int {
+	var num int = int(nombre[0])
+	var runes []rune
+	runes = []rune(nombre)
+	if (num >= 65 && num <= 78) || (num >= 97 && num <= 110){
+		if num >= 65 && num <= 78{
+			return num -65
+		}else{
+			return num -97
+		}
+	}else if string(runes[0]) == "ñ" || string(runes[0]) == "Ñ"{
+		return 14
+	}else if (num >= 79 && num <= 90) || (num >= 111 && num <= 122){
+		if num >= 79 && num <= 90{
+			return num -64
+		}else{
+			return num -96
+		}
+	}
+	return -1
+}
+
+func reLinealizar(){
+	//var base AdminJSON.DB_VirtualMall
+	//var Indice string
+	//var runes []rune
+	MatrizTiendas := make([][][]ListaDoblementeEnlazada.ListaDoblementeEnlazada, len(departamentos))
+	for i := range MatrizTiendas {
+		MatrizTiendas[i] = make([][]ListaDoblementeEnlazada.ListaDoblementeEnlazada, 27)
+	}
+	for i := range MatrizTiendas {
+		for j:= range MatrizTiendas[i]{
+			MatrizTiendas[i][j] = make([]ListaDoblementeEnlazada.ListaDoblementeEnlazada, 5)
+		}
+	}
+	for i:=0; i < len(departamentos); i++{
+		for j:=0; j < 27; j++{
+			for k:=0; k < 5; k++{
+				MatrizTiendas[i][j][k] = lista[i+len(departamentos)*(j+27*k)]
+			}
+		}
+	}
+
 }

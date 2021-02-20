@@ -2,6 +2,20 @@ package ListaDoblementeEnlazada
 
 import "fmt"
 
+//Tipo tienda a eliminar
+type TiendaEliminar struct{
+	Nombre string
+	Categoria string
+	Calificacion int
+}
+
+//Tipo ingresado para la busqueda
+type TiendaIntroducida struct{
+	Departamento string
+	Nombre string
+	Calificacion int
+}
+
 //Tipo tienda, tiene todos los atributos de las tiendas
 type Tienda struct {
 	Nombre string
@@ -92,6 +106,24 @@ func (Lista *ListaDoblementeEnlazada) Search(valor string) (bool){
 	}
 }
 
+//funcion buscar que retorna una tienda
+func (Lista *ListaDoblementeEnlazada) Buscar(tienda TiendaIntroducida)(Tienda){
+	if Lista.cabeza.Dato.Nombre == tienda.Nombre{
+		return Lista.cabeza.Dato
+	} else if Lista.cola.Dato.Nombre == tienda.Nombre{
+		return Lista.cola.Dato
+	}else{
+		auxiliar := Lista.cabeza
+		for auxiliar.siguiente.Dato.Nombre != tienda.Nombre{
+			auxiliar = auxiliar.siguiente
+			if auxiliar.siguiente == nil{
+				return auxiliar.siguiente.Dato
+				fmt.Println("El valor a eliminar no existe")
+			}
+		}
+		return auxiliar.siguiente.Dato
+	}
+}
 
 //Funcion para la imporesion de nodos
 func (Lista ListaDoblementeEnlazada) Imprimir(){

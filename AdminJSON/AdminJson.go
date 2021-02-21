@@ -3,7 +3,6 @@ package AdminJSON
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
 	"github.com/mzohreva/GoGraphviz/graphviz"
 	"io"
@@ -144,7 +143,6 @@ func Linealizacion(db DB_VirtualMall) ([]ListaDoblementeEnlazada.ListaDoblemente
 		}
 	}
 	ListaLinealizada := make([]ListaDoblementeEnlazada.ListaDoblementeEnlazada, len(MapaDepartamentos)*len(MapaIndices)*5)
-	fmt.Println(len(ListaLinealizada))
 	for i:=0; i < len(MapaDepartamentos); i++{
 		for j:=0; j < len(MapaIndices); j++{
 			for k:=0; k < 5; k++{

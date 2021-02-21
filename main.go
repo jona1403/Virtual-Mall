@@ -6,9 +6,11 @@ import (
 	"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
 	"github.com/gorilla/mux"
-	"log"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"strconv"
+
 	//"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 )
 var db AdminJSON.DB_VirtualMall
@@ -95,7 +97,31 @@ func getArreglo(w http.ResponseWriter, r *http.Request){
 	AdminJSON.Graficar(lista)
 	json.NewEncoder(w).Encode("Grafica generada")
 }
+//Obtiene posicion especifica
+func getPosition(w http.ResponseWriter, r *http.Request){
+	datos := mux.Vars(r)
+	Posision, _ := strconv.Atoi(datos["id"])
+	lpos, _ := strconv.Atoi(datos["numero"])
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	if Posision<len(lista) {
+		if lpos <= lista[Posision].Tamano && lpos > 0{
+			cabeza := lista[Posision].Cabeza
+			for i:= 1; i<=lpos;i++{
+				if i == lpos{
+					json.NewEncoder(w).Encode(cabeza.Dato)
+				}else{
+					cabeza = cabeza.Siguiente
+				}
+			}
+		}else{
+			json.NewEncoder(w).Encode("Numero invalido")
+		}
+	}else {
+		json.NewEncoder(w).Encode("Posicion invalida")
+	}
 
+}
 func main() {
 	router := mux.NewRouter()
 	//Funcional
@@ -108,9 +134,10 @@ func main() {
 	router.HandleFunc("/TiendaEspecifica", getTiendaEspecifica).Methods("POST")
 	//Funcional
 	router.HandleFunc("/guardar", saveJSON).Methods("GET")
-	//no Funcional
+	//Funcional
 	router.HandleFunc("/getArreglo", getArreglo).Methods("GET")
 
+	router.HandleFunc("/{id}/{numero}", getPosition).Methods("GET")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
 

@@ -26,78 +26,78 @@ type Tienda struct {
 
 //Nodo, es utilizado para la lista doblemente enlazada
 type Nodo struct {
-	anterior,siguiente *Nodo
-	Dato Tienda
+	Anterior, Siguiente *Nodo
+	Dato                Tienda
 }
 
 //Lista doblemente enlazada, contiene todas las tiendas que se encuentren dentro
 //de la misma sección y mismo puntaje
 type ListaDoblementeEnlazada struct {
-	cabeza, cola *Nodo
-	tamano int
+	Cabeza, cola *Nodo
+	Tamano       int
 }
 
 //Función que permite agregar las tiendas a la lista doblemente enlazada
 func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(nombre string, descripcion string, contacto string, calificacion int) {
 	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion}}
-	if Lista.tamano == 0{
-		Lista.cabeza = n
+	if Lista.Tamano == 0{
+		Lista.Cabeza = n
 		Lista.cola = n
 	}else{
-		aux := Lista.cabeza
-		Lista.cabeza = n
-		aux.anterior = Lista.cabeza
-		Lista.cabeza.siguiente = aux
+		aux := Lista.Cabeza
+		Lista.Cabeza = n
+		aux.Anterior = Lista.Cabeza
+		Lista.Cabeza.Siguiente = aux
 	}
-	Lista.tamano ++
+	Lista.Tamano++
 }
 
 //Función que permite agregar las tiendas a la lista doblemente enlazada
 func (Lista *ListaDoblementeEnlazada)AgregarAlFinal(nombre string, descripcion string, contacto string, calificacion int){
 	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion}}
-	if Lista.tamano == 0 {
-		Lista.cabeza = n
+	if Lista.Tamano == 0 {
+		Lista.Cabeza = n
 		Lista.cola = n
 	}else{
 		aux := Lista.cola
 		Lista.cola = n
-		aux.siguiente = Lista.cola
-		Lista.cola.anterior = aux
+		aux.Siguiente = Lista.cola
+		Lista.cola.Anterior = aux
 	}
-	Lista.tamano ++
+	Lista.Tamano++
 }
 
 //Permite eliminar tiendas del sistema
 func (Lista *ListaDoblementeEnlazada) Eliminar(valor string){
-	if Lista.cabeza.Dato.Nombre == valor{
-		Lista.cabeza = Lista.cabeza.siguiente
+	if Lista.Cabeza.Dato.Nombre == valor{
+		Lista.Cabeza = Lista.Cabeza.Siguiente
 	} else if Lista.cola.Dato.Nombre == valor{
-		Lista.cola = Lista.cola.anterior
+		Lista.cola = Lista.cola.Anterior
 	}else{
-		auxiliar := Lista.cabeza
-		for auxiliar.siguiente.Dato.Nombre != valor{
-			auxiliar = auxiliar.siguiente
-			if auxiliar.siguiente == nil{
+		auxiliar := Lista.Cabeza
+		for auxiliar.Siguiente.Dato.Nombre != valor{
+			auxiliar = auxiliar.Siguiente
+			if auxiliar.Siguiente == nil{
 				fmt.Println("El valor a eliminar no existe")
 				return
 			}
 		}
-		auxiliar.siguiente = auxiliar.siguiente.siguiente
+		auxiliar.Siguiente = auxiliar.Siguiente.Siguiente
 	}
-	Lista.tamano --
+	Lista.Tamano--
 }
 
 //Funcion buscar
 func (Lista *ListaDoblementeEnlazada) Search(valor string) (bool){
-	if Lista.cabeza.Dato.Nombre == valor{
+	if Lista.Cabeza.Dato.Nombre == valor{
 		return true
 	} else if Lista.cola.Dato.Nombre == valor{
 		return true
 	}else{
-		auxiliar := Lista.cabeza
-		for auxiliar.siguiente.Dato.Nombre != valor{
-			auxiliar = auxiliar.siguiente
-			if auxiliar.siguiente == nil{
+		auxiliar := Lista.Cabeza
+		for auxiliar.Siguiente.Dato.Nombre != valor{
+			auxiliar = auxiliar.Siguiente
+			if auxiliar.Siguiente == nil{
 				fmt.Println("El valor a eliminar no existe")
 				return false
 			}
@@ -108,33 +108,33 @@ func (Lista *ListaDoblementeEnlazada) Search(valor string) (bool){
 
 //funcion buscar que retorna una tienda
 func (Lista *ListaDoblementeEnlazada) Buscar(tienda TiendaIntroducida)(Tienda){
-	if Lista.cabeza.Dato.Nombre == tienda.Nombre{
-		return Lista.cabeza.Dato
+	if Lista.Cabeza.Dato.Nombre == tienda.Nombre{
+		return Lista.Cabeza.Dato
 	} else if Lista.cola.Dato.Nombre == tienda.Nombre{
 		return Lista.cola.Dato
 	}else{
-		auxiliar := Lista.cabeza
-		for auxiliar.siguiente.Dato.Nombre != tienda.Nombre{
-			auxiliar = auxiliar.siguiente
-			if auxiliar.siguiente == nil{
-				return auxiliar.siguiente.Dato
+		auxiliar := Lista.Cabeza
+		for auxiliar.Siguiente.Dato.Nombre != tienda.Nombre{
+			auxiliar = auxiliar.Siguiente
+			if auxiliar.Siguiente == nil{
+				return auxiliar.Siguiente.Dato
 				fmt.Println("El valor a eliminar no existe")
 			}
 		}
-		return auxiliar.siguiente.Dato
+		return auxiliar.Siguiente.Dato
 	}
 }
 
 //Funcion para la imporesion de nodos
 func (Lista ListaDoblementeEnlazada) Imprimir(){
-	toPrint := Lista.cabeza
-	if Lista.tamano == 0{
+	toPrint := Lista.Cabeza
+	if Lista.Tamano == 0{
 		fmt.Println("No hay Tienda")
 		return
 	}
-	for Lista.tamano != 0 {
+	for Lista.Tamano != 0 {
 		fmt.Println(toPrint.Dato.Nombre)
-		toPrint = toPrint.siguiente
-		Lista.tamano --
+		toPrint = toPrint.Siguiente
+		Lista.Tamano--
 	}
 }

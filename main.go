@@ -14,6 +14,7 @@ import (
 var db AdminJSON.DB_VirtualMall
 var lista []ListaDoblementeEnlazada.ListaDoblementeEnlazada
 var departamentos map[int]string
+var indices map[int]string
 
 //Muestra de datos
 func getJSON(w http.ResponseWriter, r *http.Request){
@@ -30,15 +31,9 @@ func setJSON(w http.ResponseWriter, r *http.Request){
 	json.Unmarshal([]byte(Tiendas), &db)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	lista, departamentos = AdminJSON.Linealizacion(db)
+	lista, departamentos, indices = AdminJSON.Linealizacion(db)
 
 	json.NewEncoder(w).Encode("Datos cargados")
-}
-
-//Obtencion de arreglo grafico
-func getArreglo(w http.ResponseWriter, r *http.Request){
-	AdminJSON.Graficar(lista)
-	json.NewEncoder(w).Encode("Grafica generada")
 }
 
 //Elimia un elemento
@@ -54,11 +49,11 @@ func eliminar(w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusCreated)
 	key := AdminJSON.KeyDepto(departamentos, tienda.Categoria)
 	if key != -1{
-		aux = getKeyLetra(tienda.Nombre)
+		aux = AdminJSON.KeyIndice(indices, tienda.Nombre)
 		if aux != -1{
 			del(tienda)
-			lista[key+len(departamentos)*(aux+27*(tienda.Calificacion-1))].Eliminar(tienda.Nombre)
-			json.NewEncoder(w).Encode("OK")
+			lista[key+len(departamentos)*(aux+len(indices)*(tienda.Calificacion-1))].Eliminar(tienda.Nombre)
+			json.NewEncoder(w).Encode("Ok")
 		}
 	}else{
 		json.NewEncoder(w).Encode("Departamento no existente")
@@ -78,9 +73,9 @@ func getTiendaEspecifica(w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusCreated)
 	key := AdminJSON.KeyDepto(departamentos, tienda.Departamento)
 	if key != -1{
-		aux = getKeyLetra(tienda.Nombre)
+		aux = AdminJSON.KeyIndice(indices, tienda.Nombre)
 		if aux != -1{
-			json.NewEncoder(w).Encode(lista[key+len(departamentos)*(aux+27*(tienda.Calificacion-1))].Buscar(tienda))
+			json.NewEncoder(w).Encode(lista[key+len(departamentos)*(aux+len(indices)*(tienda.Calificacion-1))].Buscar(tienda))
 		}
 	}else{
 		json.NewEncoder(w).Encode("Departamento no existente")
@@ -93,6 +88,12 @@ func saveJSON(w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusCreated)
 	AdminJSON.EncoderJson(db)
 	json.NewEncoder(w).Encode("Datos Guardados")
+}
+
+//Obtencion de arreglo grafico
+func getArreglo(w http.ResponseWriter, r *http.Request){
+	AdminJSON.Graficar(lista)
+	json.NewEncoder(w).Encode("Grafica generada")
 }
 
 func main() {
@@ -136,7 +137,6 @@ func getKeyLetra(nombre string) int {
 	return -1
 }
 
-
 func del(tienda ListaDoblementeEnlazada.TiendaEliminar){
 	var ListaVacia []ListaDoblementeEnlazada.Tienda
 	var Encontrada bool
@@ -165,36 +165,3 @@ func del(tienda ListaDoblementeEnlazada.TiendaEliminar){
 		}
 	}
 }
-
-/*func reLinealizar(){
-	//var base AdminJSON.DB_VirtualMall
-	//var Indice string
-	//var runes []rune
-	var mapaIndices map[(string)int]
-	MatrizTiendas := make([][][]ListaDoblementeEnlazada.ListaDoblementeEnlazada, len(departamentos))
-	for i := range MatrizTiendas {
-		MatrizTiendas[i] = make([][]ListaDoblementeEnlazada.ListaDoblementeEnlazada, 27)
-	}
-	for i := range MatrizTiendas {
-		for j:= range MatrizTiendas[i]{
-			MatrizTiendas[i][j] = make([]ListaDoblementeEnlazada.ListaDoblementeEnlazada, 5)
-		}
-	}
-	for i:=0; i < len(departamentos); i++{
-		for j:=0; j < 27; j++{
-			for k:=0; k < 5; k++{
-				MatrizTiendas[i][j][k] = lista[i+len(departamentos)*(j+27*k)]
-			}
-		}
-	}
-
-	for i:=0; i < len(departamentos); i++{
-		for j:=0; j < 27; j++{
-			for k:=0; k < 5; k++{
-				db.Datos[i].i
-				MatrizTiendas[i][j][k] = lista[i+len(departamentos)*(j+27*k)]
-			}
-		}
-	}
-
-}*/

@@ -74,6 +74,7 @@ func KeyDepto(mapa map[int]string, valor string)(int){
 	return -1
 }
 
+//Obtener la llave de los departamentos
 func KeyIndice(mapa map[int]string, valor string)(int){
 	for ke, valu := range mapa{
 		if valu == string(rune(valor[0])){

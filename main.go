@@ -136,7 +136,8 @@ func main() {
 	router.HandleFunc("/guardar", saveJSON).Methods("GET")
 	//Funcional
 	router.HandleFunc("/getArreglo", getArreglo).Methods("GET")
-
+	/*Funconal id hace referencia a la posicion dentro de la lista linealizada y numero a la posicion
+	 dentro de la lista doblemente enlazada*/
 	router.HandleFunc("/{id}/{numero}", getPosition).Methods("GET")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }

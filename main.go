@@ -19,12 +19,14 @@ var departamentos map[int]string
 var indices map[int]string
 
 //Muestra de datos
+//corregido
 func getJSON(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(db)
 }
 
 //Carga de datos
+//Corregido
 func setJSON(w http.ResponseWriter, r *http.Request){
 	Tiendas, err := ioutil.ReadAll(r.Body)
 	if err != nil{
@@ -34,11 +36,11 @@ func setJSON(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	lista, departamentos, indices = AdminJSON.Linealizacion(db)
-
 	json.NewEncoder(w).Encode("Datos cargados")
 }
 
 //Elimia un elemento
+//corregido
 func eliminar(w http.ResponseWriter, r *http.Request){
 	var aux int
 	var tienda ListaDoblementeEnlazada.TiendaEliminar
@@ -63,6 +65,7 @@ func eliminar(w http.ResponseWriter, r *http.Request){
 }
 
 //Obtiene tienda mediante parametros departamento, nombre y calificacion
+//corregido
 func getTiendaEspecifica(w http.ResponseWriter, r *http.Request){
 	var aux int
 	var tienda ListaDoblementeEnlazada.TiendaIntroducida
@@ -97,7 +100,9 @@ func getArreglo(w http.ResponseWriter, r *http.Request){
 	AdminJSON.Graficar(lista)
 	json.NewEncoder(w).Encode("Grafica generada")
 }
+
 //Obtiene posicion especifica
+//Corregido
 func getPosition(w http.ResponseWriter, r *http.Request){
 	datos := mux.Vars(r)
 	Posision, _ := strconv.Atoi(datos["id"])
@@ -165,31 +170,34 @@ func getKeyLetra(nombre string) int {
 	return -1
 }
 
+//correida
 func del(tienda ListaDoblementeEnlazada.TiendaEliminar){
 	var ListaVacia []ListaDoblementeEnlazada.Tienda
 	var Encontrada bool
-	var index int
-	var departamento string
+	var index int=0
+	var index2 int=0
+	//var departamento string
 	for i:=0; i<len(db.Datos);i++{
 		for j:=0; j<len(db.Datos[i].Departamentos);j++{
-			for key, value := range db.Datos[i].Departamentos[j]{
-				for a, valu := range value{
-					if valu.Nombre == tienda.Nombre && valu.Calificacion == tienda.Calificacion && key == tienda.Categoria{
-						Encontrada = true
-						index = a
-						departamento = key
-					}
+			for k:=0; k<len(db.Datos[i].Departamentos[j].Tiendas); k++{
+				if db.Datos[i].Departamentos[j].Tiendas[k].Nombre == tienda.Nombre && db.Datos[i].Departamentos[j].Tiendas[k].Calificacion == tienda.Calificacion && db.Datos[i].Departamentos[j].Nombre == tienda.Categoria{
+					Encontrada = true
+					index = index2
+					//departamento = db.Datos[i].Departamentos[j].Nombre
 				}
+				index2++
 			}
 			if Encontrada {
-				if len(db.Datos[i].Departamentos[j][departamento]) == 1{
-					db.Datos[i].Departamentos[j][departamento] = ListaVacia
+				if len(db.Datos[i].Departamentos[j].Tiendas) == 1{
+					db.Datos[i].Departamentos[j].Tiendas = ListaVacia
 
 				}else{
-					db.Datos[i].Departamentos[j][departamento] = append(db.Datos[i].Departamentos[j][departamento][:index], db.Datos[i].Departamentos[j][departamento][index+1:]...)
+					db.Datos[i].Departamentos[j].Tiendas = append(db.Datos[i].Departamentos[j].Tiendas[:index], db.Datos[i].Departamentos[j].Tiendas[index+1:]...)
 				}
 				return
 			}
+			index2 = 0
 		}
+
 	}
 }

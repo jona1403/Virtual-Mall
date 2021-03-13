@@ -22,6 +22,7 @@ type Tienda struct {
 	Descripcion string
 	Contacto string
 	Calificacion int
+	Logo string
 }
 
 //Nodo, es utilizado para la lista doblemente enlazada
@@ -38,8 +39,8 @@ type ListaDoblementeEnlazada struct {
 }
 
 //Función que permite agregar las tiendas a la lista doblemente enlazada
-func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(nombre string, descripcion string, contacto string, calificacion int) {
-	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion}}
+func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(nombre string, descripcion string, contacto string, calificacion int, Logo string) {
+	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion, Logo: Logo}}
 	if Lista.Tamano == 0{
 		Lista.Cabeza = n
 		Lista.cola = n
@@ -53,8 +54,8 @@ func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(nombre string, descripci
 }
 
 //Función que permite agregar las tiendas a la lista doblemente enlazada
-func (Lista *ListaDoblementeEnlazada)AgregarAlFinal(nombre string, descripcion string, contacto string, calificacion int){
-	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion}}
+func (Lista *ListaDoblementeEnlazada)AgregarAlFinal(nombre string, descripcion string, contacto string, calificacion int, Logo string){
+	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion, Logo: Logo}}
 	if Lista.Tamano == 0 {
 		Lista.Cabeza = n
 		Lista.cola = n

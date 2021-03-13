@@ -12,17 +12,25 @@ import (
 )
 
 //Tipo datos indices, contiene el indice y los departamentos que se encuentran dentro de el
+//corregido
 type Datos_Indices struct {
 	Indice string
-	Departamentos []map[string][]ListaDoblementeEnlazada.Tienda
+	Departamentos []Departamentos
+}
+//corregido
+type Departamentos struct{
+	Nombre string
+	Tiendas []ListaDoblementeEnlazada.Tienda
 }
 
 //Tipo db, dentro de este se encuentran todos los datos generales
+//corregido
 type DB_VirtualMall struct {
 	Datos []Datos_Indices
 }
 
 //Funcion de escritura del archivo JSON
+//corregido
 func EncoderJson(db DB_VirtualMall){
 	//Encoder
 	var buf = new (bytes.Buffer)
@@ -37,16 +45,16 @@ func EncoderJson(db DB_VirtualMall){
 }
 
 //Metodo de obtencion de tamaño de departamentos y mapa departamentos
+//corregido
 func getMapaDepartamentos(db DB_VirtualMall)(map[int]string){
 	MapaDepartamentos := make(map[int]string)
 	var Aux int = 0
-	for i:=0; i<len(db.Datos);i++{
-		for j:=0; j<len(db.Datos[i].Departamentos);j++{
-			for key, _ := range db.Datos[i].Departamentos[j]{
-				if !existeDepartamento(MapaDepartamentos,key){
-					MapaDepartamentos[Aux] = key
-					Aux++
-				}
+
+	for i:= 0; i<len(db.Datos); i++{
+		for j:=0; j<len(db.Datos[i].Departamentos); j++{
+			if !existeDepartamento(MapaDepartamentos,db.Datos[i].Departamentos[j].Nombre){
+				MapaDepartamentos[Aux] = db.Datos[i].Departamentos[j].Nombre
+				Aux++
 			}
 		}
 	}
@@ -54,6 +62,7 @@ func getMapaDepartamentos(db DB_VirtualMall)(map[int]string){
 }
 
 //Revisa la existencia del departamento
+//corregido
 func existeDepartamento(mapa map[int]string, valor string)(bool){
 	for _, value := range mapa{
 
@@ -86,21 +95,23 @@ func KeyIndice(mapa map[int]string, valor string)(int){
 
 
 //Obtencion mapa indices
+//Corregido
 func getMapaIndices(db DB_VirtualMall)(map[int]string){
 	MapaIndices := make(map[int]string)
 	var Aux int = 0
-	for i:=0; i<len(db.Datos);i++{
-		for j:=0; j<len(db.Datos[i].Departamentos);j++{
-			if !existeDepartamento(MapaIndices, db.Datos[i].Indice){
-				MapaIndices[Aux] = db.Datos[i].Indice
-				Aux++
-			}
+
+	for i:= 0; i<len(db.Datos); i++{
+		if !existeDepartamento(MapaIndices,db.Datos[i].Indice){
+			MapaIndices[Aux] = db.Datos[i].Indice
+			Aux++
 		}
+
 	}
 	return MapaIndices
 }
 
 //Metodo de linealizacion de datos
+//Corregido
 func Linealizacion(db DB_VirtualMall) ([]ListaDoblementeEnlazada.ListaDoblementeEnlazada, map[int]string, map[int]string) {
 	MapaDepartamentos := getMapaDepartamentos(db)
 	MapaIndices:= getMapaIndices(db)
@@ -115,35 +126,36 @@ func Linealizacion(db DB_VirtualMall) ([]ListaDoblementeEnlazada.ListaDoblemente
 			MatrizTiendas[i][j] = make([]ListaDoblementeEnlazada.ListaDoblementeEnlazada, 5)
 		}
 	}
-	for i:=0; i<len(db.Datos);i++{
-		for j:=0; j<len(db.Datos[i].Departamentos);j++{
-			for key, value := range db.Datos[i].Departamentos[j]{
-				Indice = db.Datos[i].Indice
-				runes = []rune(Indice)
-				for _, valu := range value{
-					if KeyDepto(MapaDepartamentos, key) != -1{
-						if (int(runes[0]) >= 65 && int(runes[0]) <= 78) || (int(runes[0]) >= 97 && int(runes[0]) <= 110){
-							if int(runes[0]) >= 65 && int(runes[0]) <= 78{
-								MatrizTiendas[KeyDepto(MapaDepartamentos, key)][runes[0]-65][valu.Calificacion-1].AgregarAlPrincipio(valu.Nombre, valu.Descripcion, valu.Contacto, valu.Calificacion)
-							}else{
-								MatrizTiendas[KeyDepto(MapaDepartamentos, key)][runes[0]-97][valu.Calificacion-1].AgregarAlPrincipio(valu.Nombre, valu.Descripcion, valu.Contacto, valu.Calificacion)
-							}
-						}else if Indice == "ñ" || Indice == "Ñ"{
-							MatrizTiendas[KeyDepto(MapaDepartamentos, key)][14][valu.Calificacion-1].AgregarAlPrincipio(valu.Nombre, valu.Descripcion, valu.Contacto, valu.Calificacion)
-						}else if (int(runes[0]) >= 79 && int(runes[0]) <= 90) || (int(runes[0]) >= 111 && int(runes[0]) <= 122){
-							if int(runes[0]) >= 79 && int(runes[0]) <= 90{
-								MatrizTiendas[KeyDepto(MapaDepartamentos, key)][runes[0]-64][valu.Calificacion-1].AgregarAlPrincipio(valu.Nombre, valu.Descripcion, valu.Contacto, valu.Calificacion)
-							}else{
-								MatrizTiendas[KeyDepto(MapaDepartamentos, key)][runes[0]-96][valu.Calificacion-1].AgregarAlPrincipio(valu.Nombre, valu.Descripcion, valu.Contacto, valu.Calificacion)
-							}
+	for i:=0; i< len(db.Datos); i++{
+		for j:=0; j < len(db.Datos[i].Departamentos); j++{
+			Indice = db.Datos[i].Indice
+			runes = []rune(Indice)
+			for k:=0; k < len(db.Datos[i].Departamentos[j].Tiendas); k++{
+				if KeyDepto(MapaDepartamentos, db.Datos[i].Departamentos[j].Nombre) != -1{
+					if (int(runes[0]) >= 65 && int(runes[0]) <= 78) || (int(runes[0]) >= 97 && int(runes[0]) <= 110){
+						if int(runes[0]) >= 65 && int(runes[0]) <= 78{
+							MatrizTiendas[KeyDepto(MapaDepartamentos, db.Datos[i].Departamentos[j].Nombre)][runes[0]-65][db.Datos[i].Departamentos[j].Tiendas[k].Calificacion-1].AgregarAlPrincipio(db.Datos[i].Departamentos[j].Tiendas[k].Nombre, db.Datos[i].Departamentos[j].Tiendas[k].Descripcion, db.Datos[i].Departamentos[j].Tiendas[k].Contacto, db.Datos[i].Departamentos[j].Tiendas[k].Calificacion, db.Datos[i].Departamentos[j].Tiendas[k].Logo)
+						}else{
+							MatrizTiendas[KeyDepto(MapaDepartamentos, db.Datos[i].Departamentos[j].Nombre)][runes[0]-97][db.Datos[i].Departamentos[j].Tiendas[k].Calificacion-1].AgregarAlPrincipio(db.Datos[i].Departamentos[j].Tiendas[k].Nombre, db.Datos[i].Departamentos[j].Tiendas[k].Descripcion, db.Datos[i].Departamentos[j].Tiendas[k].Contacto, db.Datos[i].Departamentos[j].Tiendas[k].Calificacion, db.Datos[i].Departamentos[j].Tiendas[k].Logo)
+						}
+					}else if Indice == "ñ" || Indice == "Ñ"{
+						MatrizTiendas[KeyDepto(MapaDepartamentos, db.Datos[i].Departamentos[j].Nombre)][14][db.Datos[i].Departamentos[j].Tiendas[k].Calificacion-1].AgregarAlPrincipio(db.Datos[i].Departamentos[j].Tiendas[k].Nombre, db.Datos[i].Departamentos[j].Tiendas[k].Descripcion, db.Datos[i].Departamentos[j].Tiendas[k].Contacto, db.Datos[i].Departamentos[j].Tiendas[k].Calificacion, db.Datos[i].Departamentos[j].Tiendas[k].Logo)
+					}else if (int(runes[0]) >= 79 && int(runes[0]) <= 90) || (int(runes[0]) >= 111 && int(runes[0]) <= 122){
+						if int(runes[0]) >= 79 && int(runes[0]) <= 90{
+							MatrizTiendas[KeyDepto(MapaDepartamentos, db.Datos[i].Departamentos[j].Nombre)][runes[0]-64][db.Datos[i].Departamentos[j].Tiendas[k].Calificacion-1].AgregarAlPrincipio(db.Datos[i].Departamentos[j].Tiendas[k].Nombre, db.Datos[i].Departamentos[j].Tiendas[k].Descripcion, db.Datos[i].Departamentos[j].Tiendas[k].Contacto, db.Datos[i].Departamentos[j].Tiendas[k].Calificacion, db.Datos[i].Departamentos[j].Tiendas[k].Logo)
+						}else{
+							MatrizTiendas[KeyDepto(MapaDepartamentos, db.Datos[i].Departamentos[j].Nombre)][runes[0]-96][db.Datos[i].Departamentos[j].Tiendas[k].Calificacion-1].AgregarAlPrincipio(db.Datos[i].Departamentos[j].Tiendas[k].Nombre, db.Datos[i].Departamentos[j].Tiendas[k].Descripcion, db.Datos[i].Departamentos[j].Tiendas[k].Contacto, db.Datos[i].Departamentos[j].Tiendas[k].Calificacion, db.Datos[i].Departamentos[j].Tiendas[k].Logo)
 						}
 					}
-
 				}
 			}
 		}
 	}
+
 	ListaLinealizada := make([]ListaDoblementeEnlazada.ListaDoblementeEnlazada, len(MapaDepartamentos)*len(MapaIndices)*5)
+
+
+
 	for i:=0; i < len(MapaDepartamentos); i++{
 		for j:=0; j < len(MapaIndices); j++{
 			for k:=0; k < 5; k++{

@@ -1,6 +1,10 @@
 package ListaDoblementeEnlazada
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/VirtualMall/ListaDoblementeEnlazada/ArbolAVL"
+)
+
 
 //Tipo tienda a eliminar
 type TiendaEliminar struct{
@@ -23,6 +27,7 @@ type Tienda struct {
 	Contacto string
 	Calificacion int
 	Logo string
+	Arbol *ArbolAVL.AVLTree
 }
 
 //Nodo, es utilizado para la lista doblemente enlazada

@@ -29,11 +29,11 @@ type lista struct{
 }
 
 type matriz struct{
-	cabeceraHor, vabeceraVer *lista
+	cabeceraHor, cabeceraVer *lista
 
 }
 
-func (nodo *NodoC) NodoMatriz(x int, y int, pedido *Pedido) *NodoC{
+func NodoMatriz(x int, y int, pedido *Pedido) *NodoC{
 	return &NodoC{x:x,y:y,Arriba:nil,Abajo:nil,Izquierda:nil,Derecha:nil,Dato:pedido,header:nil,siguiente: nil,anterior:  nil}
 }
 
@@ -99,5 +99,171 @@ func (l *lista) Buscar(header int) *NodoC{
 }
 
 func (m *matriz) insertMatr (x int, y int, pedido *Pedido){
+	horizontal := m.cabeceraHor.Buscar(x)
+	vertical := m.cabeceraVer.Buscar(y)
 
+	if horizontal == nil && vertical == nil{
+		m.Noexisteninguno(x, y, pedido)
+	}else if horizontal == nil && vertical != nil{
+		m.SoloVertical(x, y, pedido)
+	}else if vertical == nil && horizontal != nil{
+		m.SoloHorizontal(x, y, pedido)
+	}else{
+		m.ExistenAmbas(x, y, pedido)
+	}
+}
+
+func (m *matriz) Noexisteninguno(x int, y int, pedido *Pedido){
+	m.cabeceraHor.Insertar(x)
+	m.cabeceraVer.Insertar(y)
+
+	horizontal := m.cabeceraHor.Buscar(x)
+	vertical := m.cabeceraVer.Buscar(y)
+
+	nuevo := NodoMatriz(x, y , pedido)
+
+	horizontal.Abajo = nuevo
+	nuevo.Arriba = horizontal
+
+	vertical.Derecha = nuevo
+	nuevo.Izquierda = vertical
+
+}
+
+func (m *matriz) SoloVertical(x int, y int, pedido *Pedido){
+	m.cabeceraHor.Insertar(x)
+	horizontal := m.cabeceraHor.Buscar(x)
+	vertical := m.cabeceraVer.Buscar(y)
+
+	nuevo := NodoMatriz(x, y, pedido)
+	isagregado := false
+
+	aux:= vertical.Derecha
+
+	var cabecera int
+
+	for aux != nil{
+		cabecera = aux.headerX()
+		if cabecera < x{
+			aux = aux.Derecha
+		}else{
+			nuevo.Derecha = aux
+			nuevo.Izquierda = aux.Izquierda
+			aux.Izquierda.Derecha = nuevo
+			aux.Izquierda = nuevo
+			isagregado = true
+			break
+		}
+	}
+	if !isagregado {
+		aux = vertical.Derecha
+		for aux.Derecha != nil{
+			aux = aux.Derecha
+		}
+		nuevo.Izquierda = aux
+		aux.Derecha = nuevo
+	}
+
+	nuevo.Arriba = horizontal
+	horizontal.Abajo = nuevo
+}
+
+func (m *matriz) SoloHorizontal(x int, y int, pedido *Pedido){
+	m.cabeceraVer.Insertar(y)
+	horizontal := m.cabeceraHor.Buscar(x)
+	vertical := m.cabeceraVer.Buscar(y)
+
+	nuevo := NodoMatriz(x, y, pedido)
+	isagregado := false
+
+	aux:= horizontal.Abajo
+
+	var cabecera int
+
+	for aux != nil{
+		cabecera = aux.headerY()
+		if cabecera < y{
+			aux = aux.Abajo
+		}else{
+			nuevo.Abajo = aux
+			nuevo.Arriba = aux.Arriba
+			aux.Arriba.Abajo = nuevo
+			aux.Arriba = nuevo
+			isagregado = true
+			break
+		}
+	}
+	if !isagregado {
+		aux = horizontal.Abajo
+		for aux.Abajo != nil{
+			aux = aux.Abajo
+		}
+		nuevo.Arriba = aux
+		aux.Abajo = nuevo
+	}
+
+	nuevo.Izquierda = vertical
+	vertical.Derecha = nuevo
+}
+
+func (m *matriz) ExistenAmbas(x int, y int, pedido *Pedido){
+	horizontal := m.cabeceraHor.Buscar(x)
+	vertical := m.cabeceraVer.Buscar(y)
+
+	nuevo := NodoMatriz(x, y, pedido)
+	isagregado := false
+
+	aux:= vertical.Derecha
+
+	var cabecera int
+
+	for aux != nil{
+		cabecera = aux.headerX()
+		if cabecera < x{
+			aux = aux.Derecha
+		}else{
+			nuevo.Derecha = aux
+			nuevo.Izquierda = aux.Izquierda
+			aux.Izquierda.Derecha = nuevo
+			aux.Izquierda = nuevo
+			isagregado = true
+			break
+		}
+	}
+	if !isagregado {
+		aux = vertical.Derecha
+		for aux.Derecha != nil{
+			aux = aux.Derecha
+		}
+		nuevo.Izquierda = aux
+		aux.Derecha = nuevo
+	}
+
+	isagregado = false
+
+	aux = horizontal.Abajo
+
+
+
+	for aux != nil{
+		cabecera = aux.headerY()
+		if cabecera < y{
+			aux = aux.Abajo
+		}else{
+			nuevo.Abajo = aux
+			nuevo.Arriba = aux.Arriba
+			aux.Arriba.Abajo = nuevo
+			aux.Arriba = nuevo
+			isagregado = true
+			break
+		}
+	}
+	if !isagregado {
+		aux = horizontal.Abajo
+		for aux.Abajo != nil{
+			aux = aux.Abajo
+		}
+		nuevo.Arriba = aux
+		aux.Abajo = nuevo
+	}
 }

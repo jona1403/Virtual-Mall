@@ -22,22 +22,6 @@ type BD_Inventarios struct {
 	Inventarios []InventarioTienda
 }
 
-type ProductoPedido struct{
-	Codigo int
-}
-
-type Pedido struct{
-	Fecha string
-	Tienda string
-	Departamento string
-	Calificacion int
-	Productos []ProductoPedido
-}
-
-type BD_Pedidos struct {
-	Pedidos []Pedido
-}
-
 //Tipo nodo del arbol AVL
 type AVLnode struct {
 	Product Producto
@@ -79,6 +63,10 @@ func (avl AVLTree) Agregar2(producto Producto, temporal *AVLnode) *AVLnode{
 				temporal = avl.drr(temporal)
 			}
 		}
+	//Verificar esta condicion
+	}else if producto.Codigo == temporal.Product.Codigo{
+		temporal.Product.Cantidad+= producto.Cantidad
+		return temporal
 	}else{
 		temporal.izquierdo = avl.Agregar2(producto, temporal.izquierdo)
 		if avl.altura(temporal.izquierdo) - avl.altura(temporal.derecho) == 2{
@@ -125,10 +113,25 @@ func (avl AVLTree) drr(temporal *AVLnode) *AVLnode{
 	return avl.srr(temporal)
 }
 
+//Funcion de impresion de nodos en orden
 func (avl AVLTree) enorden(temporal *AVLnode){
 	if temporal != nil{
 		avl.enorden(temporal.izquierdo)
 		fmt.Print(temporal.Product.Codigo)
 		avl.enorden(temporal.derecho)
 	}
+}
+
+//Funcion buscar(Falta probarla)
+func (avl AVLTree) Buscar(producto Producto , temporal *AVLnode) bool{
+	if temporal != nil{
+		if producto.Codigo == temporal.Product.Codigo{
+			return true
+		}else if producto.Codigo > temporal.Product.Codigo{
+			return avl.Buscar(producto, temporal.derecho)
+		}else{
+			return avl.Buscar(producto, temporal.izquierdo)
+		}
+	}
+	return false
 }

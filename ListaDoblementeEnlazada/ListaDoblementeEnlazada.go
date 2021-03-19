@@ -27,7 +27,7 @@ type Tienda struct {
 	Contacto string
 	Calificacion int
 	Logo string
-	Arbol *ArbolAVL.AVLTree
+	Arbol ArbolAVL.AVLTree
 }
 
 //Nodo, es utilizado para la lista doblemente enlazada
@@ -109,6 +109,26 @@ func (Lista *ListaDoblementeEnlazada) Search(valor string) (bool){
 			}
 		}
 		return true
+	}
+}
+
+//Permite agregar productos al arbol dentro de la lista doblemente enlazada
+func (Lista *ListaDoblementeEnlazada) AgregarProducto(producto ArbolAVL.Producto, nombre string){
+	if Lista.Cabeza.Dato.Nombre == nombre{
+		Lista.Cabeza.Dato.Arbol.Agegar(producto)
+	} else if Lista.cola.Dato.Nombre == nombre{
+		Lista.cola.Dato.Arbol.Agegar(producto)
+		Lista.cola = Lista.cola.Anterior
+	}else{
+		auxiliar := Lista.Cabeza
+		for auxiliar.Siguiente.Dato.Nombre != nombre{
+			auxiliar = auxiliar.Siguiente
+			if auxiliar.Siguiente == nil{
+				fmt.Println("La tienda no existe")
+				return
+			}
+		}
+		auxiliar.Siguiente.Dato.Arbol.Agegar(producto)
 	}
 }
 

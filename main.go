@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
+	"github.com/VirtualMall/ListaDoblementeEnlazada/ArbolAVL"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
-
-	//"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 )
 var db AdminJSON.DB_VirtualMall
+var dbproductos ArbolAVL.BD_Inventarios
 var lista []ListaDoblementeEnlazada.ListaDoblementeEnlazada
 var departamentos map[int]string
 var indices map[int]string
@@ -36,6 +37,20 @@ func setJSON(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	lista, departamentos, indices = AdminJSON.Linealizacion(db)
+	json.NewEncoder(w).Encode("Datos cargados")
+}
+
+
+//Cargar productos mediante JSON
+func setproductos(w http.ResponseWriter, r *http.Request){
+	Productos, err := ioutil.ReadAll(r.Body)
+	if err != nil{
+		fmt.Fprintf(w, "Datos no validos")
+	}
+	json.Unmarshal([]byte(Productos), &dbproductos)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	lista = AdminJSON.AgregarProducto(dbproductos, lista, departamentos, indices)
 	json.NewEncoder(w).Encode("Datos cargados")
 }
 
@@ -132,6 +147,8 @@ func main() {
 	//Funcional
 	router.HandleFunc("/cargartienda", setJSON).Methods("POST")
 	//Funcional
+	router.HandleFunc("/cargarproductos", setproductos).Methods("POST")
+	//Funcional
 	router.HandleFunc("/Tiendas", getJSON).Methods("GET")
 	//Funcional
 	router.HandleFunc("/Eliminar", eliminar).Methods("DELETE")
@@ -144,7 +161,8 @@ func main() {
 	/*Funconal id hace referencia a la posicion dentro de la lista linealizada y numero a la posicion
 	 dentro de la lista doblemente enlazada*/
 	router.HandleFunc("/{id}/{numero}", getPosition).Methods("GET")
-	log.Fatal(http.ListenAndServe(":3000", router))
+	log.Fatal(http.ListenAndServe(":3000", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
+	//log.Fatal(http.ListenAndServe(":3000", router))
 }
 
 //Obtencion de llave de letra

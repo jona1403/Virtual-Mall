@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
+	"github.com/VirtualMall/ListaDoblementeEnlazada/ArbolAVL"
 	"github.com/mzohreva/GoGraphviz/graphviz"
 	"io"
 	"log"
@@ -164,6 +165,19 @@ func Linealizacion(db DB_VirtualMall) ([]ListaDoblementeEnlazada.ListaDoblemente
 		}
 	}
 	return ListaLinealizada, MapaDepartamentos, MapaIndices
+}
+
+//Metodo de llenado de arboles
+func AgregarProducto(db ArbolAVL.BD_Inventarios,lista []ListaDoblementeEnlazada.ListaDoblementeEnlazada,mapadepartamentos map[int]string,mapaindices map[int]string)([]ListaDoblementeEnlazada.ListaDoblementeEnlazada){
+
+	for i:=0;i < len(db.Inventarios); i++{
+		keydp := KeyDepto(mapadepartamentos, db.Inventarios[i].Departamento)
+		keyin := KeyIndice(mapaindices, db.Inventarios[i].Tienda)
+		for j:= 0; j< len(db.Inventarios[i].Productos); j++{
+			lista[keydp+len(mapadepartamentos)*(keyin+len(mapaindices)*(db.Inventarios[i].Calificacion-1))].AgregarProducto(db.Inventarios[i].Productos[j], db.Inventarios[i].Tienda)
+		}
+	}
+	return lista
 }
 
 //Grafica de lista linealizada

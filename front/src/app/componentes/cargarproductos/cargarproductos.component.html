@@ -2,7 +2,7 @@
     <div class="col-md-5">
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             Productos cargadas exitosamente
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <button (click)="desactivarMensaje()" type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -12,7 +12,7 @@
     <div class="col-md-5">
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             Error al cargar los productos
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <button (click)="desactivarMensaje()" type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -37,7 +37,7 @@
                             </div>
                             <div class="row justify-content-center">
                                 <div class="col-sm-6">
-                                    <button  class="btn btn-primary btn-block text-white btn-user" type="submit">Cargar</button>
+                                    <button (click)="insertarProductos()" class="btn btn-primary btn-block text-white btn-user" type="submit">Cargar</button>
                                 </div>
                             </div>
                         </form>

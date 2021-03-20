@@ -18,8 +18,9 @@ export class CargarTiendasComponent implements OnInit {
   constructor(private tiendasService: TiendasService) {  }
 
   agregarTiendas(){
-    const t: DbTiendas = new DbTiendas(this.tiendas.value);
-    this.tiendasService.postTienda(t).subscribe((res: any) => {
+    const a: JSON =  JSON.parse(this.tiendas.value);
+    //const t: DbTiendas = new DbTiendas(this.tiendas.value);
+    this.tiendasService.postTienda(a).subscribe((res: any) => {
       this.mostrarMensaje = true;
       this.tiendas.setValue("");
     }, (err)=>{

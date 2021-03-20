@@ -3,6 +3,7 @@ package AdminJSON
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ArbolAVL"
 	"github.com/mzohreva/GoGraphviz/graphviz"
@@ -174,6 +175,7 @@ func AgregarProducto(db ArbolAVL.BD_Inventarios,lista []ListaDoblementeEnlazada.
 		keydp := KeyDepto(mapadepartamentos, db.Inventarios[i].Departamento)
 		keyin := KeyIndice(mapaindices, db.Inventarios[i].Tienda)
 		for j:= 0; j< len(db.Inventarios[i].Productos); j++{
+			fmt.Println(db.Inventarios[i].Productos[j].Nombre)
 			lista[keydp+len(mapadepartamentos)*(keyin+len(mapaindices)*(db.Inventarios[i].Calificacion-1))].AgregarProducto(db.Inventarios[i].Productos[j], db.Inventarios[i].Tienda)
 		}
 	}

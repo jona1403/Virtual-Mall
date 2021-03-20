@@ -10,6 +10,8 @@ import { CargarTiendasComponent } from './componentes/cargar-tiendas/cargar-tien
 import { InicioComponent } from './componentes/inicio/inicio.component';
 import { CargarproductosComponent } from './componentes/cargarproductos/cargarproductos.component';
 import { VerproductosComponent } from './componentes/verproductos/verproductos.component';
+import { CargarpedidosComponent } from './componentes/cargarpedidos/cargarpedidos.component';
+import { VerpedidoComponent } from './componentes/verpedido/verpedido.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { VerproductosComponent } from './componentes/verproductos/verproductos.c
     CargarTiendasComponent,
     InicioComponent,
     CargarproductosComponent,
-    VerproductosComponent
+    VerproductosComponent,
+    CargarpedidosComponent,
+    VerpedidoComponent
   ],
   imports: [
     BrowserModule, 

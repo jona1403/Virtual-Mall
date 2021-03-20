@@ -30,10 +30,12 @@ func getJSON(w http.ResponseWriter, r *http.Request){
 //Corregido
 func setJSON(w http.ResponseWriter, r *http.Request){
 	Tiendas, err := ioutil.ReadAll(r.Body)
+
 	if err != nil{
 		fmt.Fprintf(w, "Datos no validos")
 	}
 	json.Unmarshal([]byte(Tiendas), &db)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	lista, departamentos, indices = AdminJSON.Linealizacion(db)
@@ -51,6 +53,10 @@ func setproductos(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	lista = AdminJSON.AgregarProducto(dbproductos, lista, departamentos, indices)
+	json.NewEncoder(w).Encode("Datos cargados")
+}
+
+func setPedidos(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode("Datos cargados")
 }
 
@@ -148,6 +154,8 @@ func main() {
 	router.HandleFunc("/cargartienda", setJSON).Methods("POST")
 	//Funcional
 	router.HandleFunc("/cargarproductos", setproductos).Methods("POST")
+	//Funcional
+	router.HandleFunc("/setPedidos", setPedidos).Methods("POST")
 	//Funcional
 	router.HandleFunc("/Tiendas", getJSON).Methods("GET")
 	//Funcional

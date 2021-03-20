@@ -21,7 +21,8 @@ export class CargarproductosComponent implements OnInit {
   }
 
   insertarProductos(){
-    const p: Bdinventario = new Bdinventario(this.productos.value);
+    const p: JSON =  JSON.parse(this.productos.value);
+    //const p: Bdinventario = new Bdinventario(this.productos.value);
     this.productosservice.postProductos(p).subscribe((res: any) =>{
       this.mostrarMensaje = true;
       this.productos.setValue("");

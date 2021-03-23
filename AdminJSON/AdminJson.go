@@ -171,13 +171,14 @@ func Linealizacion(db DB_VirtualMall) ([]ListaDoblementeEnlazada.ListaDoblemente
 //Metodo de llenado de arboles
 func AgregarProducto(db ArbolAVL.BD_Inventarios,lista []ListaDoblementeEnlazada.ListaDoblementeEnlazada,mapadepartamentos map[int]string,mapaindices map[int]string)([]ListaDoblementeEnlazada.ListaDoblementeEnlazada){
 
-	for i:=0;i < len(db.Inventarios); i++{
-		keydp := KeyDepto(mapadepartamentos, db.Inventarios[i].Departamento)
-		keyin := KeyIndice(mapaindices, db.Inventarios[i].Tienda)
-		for j:= 0; j< len(db.Inventarios[i].Productos); j++{
-			fmt.Println(db.Inventarios[i].Productos[j].Nombre)
-			lista[keydp+len(mapadepartamentos)*(keyin+len(mapaindices)*(db.Inventarios[i].Calificacion-1))].AgregarProducto(db.Inventarios[i].Productos[j], db.Inventarios[i].Tienda)
+	for i:=0;i < len(db.Invetarios); i++{
+		keydp := KeyDepto(mapadepartamentos, db.Invetarios[i].Departamento)
+		keyin := KeyIndice(mapaindices, db.Invetarios[i].Tienda)
+		for j:= 0; j< len(db.Invetarios[i].Productos); j++{
+			fmt.Println(db.Invetarios[i].Productos[j].Nombre)
+			lista[keydp+len(mapadepartamentos)*(keyin+len(mapaindices)*(db.Invetarios[i].Calificacion-1))].AgregarProducto(db.Invetarios[i].Productos[j], db.Invetarios[i].Tienda)
 		}
+
 	}
 	return lista
 }

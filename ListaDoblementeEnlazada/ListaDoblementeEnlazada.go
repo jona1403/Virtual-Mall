@@ -45,7 +45,8 @@ type ListaDoblementeEnlazada struct {
 
 //Función que permite agregar las tiendas a la lista doblemente enlazada
 func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(nombre string, descripcion string, contacto string, calificacion int, Logo string) {
-	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion, Logo: Logo}}
+	abr := ArbolAVL.AVLTree{}
+	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion, Logo: Logo, Arbol: abr}}
 	if Lista.Tamano == 0{
 		Lista.Cabeza = n
 		Lista.cola = n
@@ -60,7 +61,7 @@ func (Lista *ListaDoblementeEnlazada)AgregarAlPrincipio(nombre string, descripci
 
 //Función que permite agregar las tiendas a la lista doblemente enlazada
 func (Lista *ListaDoblementeEnlazada)AgregarAlFinal(nombre string, descripcion string, contacto string, calificacion int, Logo string){
-	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion, Logo: Logo}}
+	n := &Nodo{Dato: Tienda{Nombre: nombre, Descripcion: descripcion, Contacto: contacto, Calificacion: calificacion, Logo: Logo, Arbol: ArbolAVL.AVLTree{}}}
 	if Lista.Tamano == 0 {
 		Lista.Cabeza = n
 		Lista.cola = n
@@ -113,12 +114,14 @@ func (Lista *ListaDoblementeEnlazada) Search(valor string) (bool){
 }
 
 //Permite agregar productos al arbol dentro de la lista doblemente enlazada
+//Falta validacion para cuando no existen las tiendas
 func (Lista *ListaDoblementeEnlazada) AgregarProducto(producto ArbolAVL.Producto, nombre string){
 	if Lista.Cabeza.Dato.Nombre == nombre{
 		Lista.Cabeza.Dato.Arbol.Agegar(producto)
+		return
 	} else if Lista.cola.Dato.Nombre == nombre{
 		Lista.cola.Dato.Arbol.Agegar(producto)
-		Lista.cola = Lista.cola.Anterior
+		return
 	}else{
 		auxiliar := Lista.Cabeza
 		for auxiliar.Siguiente.Dato.Nombre != nombre{
@@ -128,7 +131,7 @@ func (Lista *ListaDoblementeEnlazada) AgregarProducto(producto ArbolAVL.Producto
 				return
 			}
 		}
-		auxiliar.Siguiente.Dato.Arbol.Agegar(producto)
+		auxiliar.Dato.Arbol.Agegar(producto)
 	}
 }
 

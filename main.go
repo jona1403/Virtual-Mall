@@ -6,6 +6,7 @@ import (
 	"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ArbolAVL"
+	"github.com/VirtualMall/ListaDoblementeEnlazada/MatrizDispersa"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"io/ioutil"
@@ -15,6 +16,7 @@ import (
 )
 var db AdminJSON.DB_VirtualMall
 var dbproductos ArbolAVL.BD_Inventarios
+var dbpedidos MatrizDispersa.BD_Pedidos
 var lista []ListaDoblementeEnlazada.ListaDoblementeEnlazada
 var departamentos map[int]string
 var indices map[int]string
@@ -42,7 +44,6 @@ func setJSON(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode("Datos cargados")
 }
 
-
 //Cargar productos mediante JSON
 func setproductos(w http.ResponseWriter, r *http.Request){
 	Productos, err := ioutil.ReadAll(r.Body)
@@ -52,11 +53,22 @@ func setproductos(w http.ResponseWriter, r *http.Request){
 	json.Unmarshal([]byte(Productos), &dbproductos)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	//fmt.Println(dbproductos)
 	lista = AdminJSON.AgregarProducto(dbproductos, lista, departamentos, indices)
 	json.NewEncoder(w).Encode("Datos cargados")
 }
 
 func setPedidos(w http.ResponseWriter, r *http.Request){
+	Pedidos, err := ioutil.ReadAll(r.Body)
+
+	if err != nil{
+		fmt.Fprintf(w, "Datos no validos")
+	}
+	json.Unmarshal([]byte(Pedidos), &dbpedidos)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	//lista, departamentos, indices = AdminJSON.Linealizacion(dbpedidos)
 	json.NewEncoder(w).Encode("Datos cargados")
 }
 

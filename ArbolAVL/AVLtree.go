@@ -19,7 +19,7 @@ type InventarioTienda struct{
 }
 
 type BD_Inventarios struct {
-	Inventarios []InventarioTienda
+	Invetarios []InventarioTienda
 }
 
 //Tipo nodo del arbol AVL
@@ -79,6 +79,10 @@ func (avl AVLTree) Agregar2(producto Producto, temporal *AVLnode) *AVLnode{
 	}
 	temporal.Altura = avl.max(avl.altura(temporal.derecho), avl.altura(temporal.izquierdo))+1
 	return temporal
+}
+
+func (avl *AVLTree) RestarUnidades(codigo int, cantidad int){
+
 }
 
 //Rotacion simple a la derecha

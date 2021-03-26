@@ -1,5 +1,7 @@
 package MatrizDispersa
 
+import "strconv"
+
 type nodeanio struct{
 	arbolmeses             Arbol
 	anio               int
@@ -23,6 +25,37 @@ func (avl Arbolanio) max(valor1 int, valor2 int) int{
 
 func (avl *Arbolanio) add(arbol Arbol, mes int){
 	avl.root = avl.add2(arbol, mes, avl.root)
+}
+
+//Verifica si existe el anio
+func (avl Arbolanio) SearchAnios(Anio int, temporal *nodeanio) bool{
+	if temporal != nil{
+		if temporal.anio == Anio{
+			return true
+		}else if Anio > temporal.anio{
+			return avl.SearchAnios(Anio, temporal.derecha)
+		}else{
+			return avl.SearchAnios(Anio, temporal.izquierda)
+		}
+	}
+	return false
+}
+
+func (avl *Arbolanio) AddmonthsToAnios(Anio int, pedido Pedido){
+	avl.root = avl._AdmonthsToAnios(Anio, pedido, avl.root)
+}
+
+func (avl *Arbolanio) _AdmonthsToAnios(Anio int, pedido Pedido, temp *nodeanio) *nodeanio{
+	if temp.anio == Anio{
+		s:= pedido.Fecha
+		mes, _ := strconv.Atoi(s[3:5])
+		temp.arbolmeses.add(Matriz{}, mes)
+	}else if Anio > temp.anio{
+		temp.derecha = avl._AdmonthsToAnios(Anio, pedido, temp.derecha)
+	}else{
+		temp.izquierda = avl._AdmonthsToAnios(Anio, pedido, temp.izquierda)
+	}
+	return temp
 }
 
 func (avl Arbolanio) add2(arbol Arbol, anio int, temporal *nodeanio) *nodeanio {

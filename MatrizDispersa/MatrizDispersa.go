@@ -19,7 +19,7 @@ type BD_Pedidos struct {
 type NodoC struct{
 	x, y int
 	Arriba, Abajo, Izquierda, Derecha *NodoC
-	Dato *Pedido
+	Dato *List
 	header int
 	siguiente, anterior *NodoC
 }
@@ -33,8 +33,8 @@ type Matriz struct{
 
 }
 
-func NodoMatriz(x int, y int, pedido *Pedido) *NodoC{
-	return &NodoC{x:x,y:y,Dato:pedido}
+func NodoMatriz(x int, y int, l *List) *NodoC{
+	return &NodoC{x:x,y:y,Dato: l}
 }
 
 func NodoLista(header int) *NodoC{
@@ -98,29 +98,29 @@ func (l *lista) Buscar(header int) *NodoC{
 	return nil
 }
 
-func (m *Matriz) insertMatr (x int, y int, pedido *Pedido){
+func (m *Matriz) insertMatr (x int, y int, l *List){
 	horizontal := m.cabeceraHor.Buscar(x)
 	vertical := m.cabeceraVer.Buscar(y)
 
 	if horizontal == nil && vertical == nil{
-		m.Noexisteninguno(x, y, pedido)
+		m.Noexisteninguno(x, y, l)
 	}else if horizontal == nil && vertical != nil{
-		m.SoloVertical(x, y, pedido)
+		m.SoloVertical(x, y, l)
 	}else if vertical == nil && horizontal != nil{
-		m.SoloHorizontal(x, y, pedido)
+		m.SoloHorizontal(x, y, l)
 	}else{
-		m.ExistenAmbas(x, y, pedido)
+		m.ExistenAmbas(x, y, l)
 	}
 }
 
-func (m *Matriz) Noexisteninguno(x int, y int, pedido *Pedido){
+func (m *Matriz) Noexisteninguno(x int, y int, l *List){
 	m.cabeceraHor.Insertar(x)
 	m.cabeceraVer.Insertar(y)
 
 	horizontal := m.cabeceraHor.Buscar(x)
 	vertical := m.cabeceraVer.Buscar(y)
 
-	nuevo := NodoMatriz(x, y , pedido)
+	nuevo := NodoMatriz(x, y , l)
 
 	horizontal.Abajo = nuevo
 	nuevo.Arriba = horizontal
@@ -130,12 +130,12 @@ func (m *Matriz) Noexisteninguno(x int, y int, pedido *Pedido){
 
 }
 
-func (m *Matriz) SoloVertical(x int, y int, pedido *Pedido){
+func (m *Matriz) SoloVertical(x int, y int, l *List){
 	m.cabeceraHor.Insertar(x)
 	horizontal := m.cabeceraHor.Buscar(x)
 	vertical := m.cabeceraVer.Buscar(y)
 
-	nuevo := NodoMatriz(x, y, pedido)
+	nuevo := NodoMatriz(x, y, l)
 	isagregado := false
 
 	aux:= vertical.Derecha
@@ -168,12 +168,12 @@ func (m *Matriz) SoloVertical(x int, y int, pedido *Pedido){
 	horizontal.Abajo = nuevo
 }
 
-func (m *Matriz) SoloHorizontal(x int, y int, pedido *Pedido){
+func (m *Matriz) SoloHorizontal(x int, y int, l *List){
 	m.cabeceraVer.Insertar(y)
 	horizontal := m.cabeceraHor.Buscar(x)
 	vertical := m.cabeceraVer.Buscar(y)
 
-	nuevo := NodoMatriz(x, y, pedido)
+	nuevo := NodoMatriz(x, y, l)
 	isagregado := false
 
 	aux:= horizontal.Abajo
@@ -206,11 +206,11 @@ func (m *Matriz) SoloHorizontal(x int, y int, pedido *Pedido){
 	vertical.Derecha = nuevo
 }
 
-func (m *Matriz) ExistenAmbas(x int, y int, pedido *Pedido){
+func (m *Matriz) ExistenAmbas(x int, y int, l *List){
 	horizontal := m.cabeceraHor.Buscar(x)
 	vertical := m.cabeceraVer.Buscar(y)
 
-	nuevo := NodoMatriz(x, y, pedido)
+	nuevo := NodoMatriz(x, y, l)
 	isagregado := false
 
 	aux:= vertical.Derecha

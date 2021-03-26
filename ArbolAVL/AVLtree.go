@@ -24,9 +24,9 @@ type BD_Inventarios struct {
 
 //Tipo nodo del arbol AVL
 type AVLnode struct {
-	Product Producto
-	Altura int
-	izquierdo, derecho *AVLnode
+	Product            Producto
+	Altura             int
+	Izquierdo, Derecho *AVLnode
 }
 
 //Tipo Arbol AVL
@@ -55,9 +55,9 @@ func (avl AVLTree) Agregar2(producto Producto, temporal *AVLnode) *AVLnode{
 	if temporal == nil{
 		return &AVLnode{Product: producto}
 	}else if producto.Codigo > temporal.Product.Codigo{
-		temporal.derecho = avl.Agregar2(producto, temporal.derecho)
-		if(avl.altura(temporal.derecho)-avl.altura(temporal.izquierdo) == 2){
-			if producto.Codigo > temporal.derecho.Product.Codigo{
+		temporal.Derecho = avl.Agregar2(producto, temporal.Derecho)
+		if(avl.altura(temporal.Derecho)-avl.altura(temporal.Izquierdo) == 2){
+			if producto.Codigo > temporal.Derecho.Product.Codigo{
 				temporal = avl.srr(temporal)
 			}else{
 				temporal = avl.drr(temporal)
@@ -68,16 +68,16 @@ func (avl AVLTree) Agregar2(producto Producto, temporal *AVLnode) *AVLnode{
 		temporal.Product.Cantidad+= producto.Cantidad
 		return temporal
 	}else{
-		temporal.izquierdo = avl.Agregar2(producto, temporal.izquierdo)
-		if avl.altura(temporal.izquierdo) - avl.altura(temporal.derecho) == 2{
-			if producto.Codigo < temporal.izquierdo.Product.Codigo{
+		temporal.Izquierdo = avl.Agregar2(producto, temporal.Izquierdo)
+		if avl.altura(temporal.Izquierdo) - avl.altura(temporal.Derecho) == 2{
+			if producto.Codigo < temporal.Izquierdo.Product.Codigo{
 				temporal = avl.srl(temporal)
 			}else{
 				temporal = avl.drl(temporal)
 			}
 		}
 	}
-	temporal.Altura = avl.max(avl.altura(temporal.derecho), avl.altura(temporal.izquierdo))+1
+	temporal.Altura = avl.max(avl.altura(temporal.Derecho), avl.altura(temporal.Izquierdo))+1
 	return temporal
 }
 
@@ -87,42 +87,42 @@ func (avl *AVLTree) RestarUnidades(codigo int, cantidad int){
 
 //Rotacion simple a la derecha
 func (avl AVLTree) srl(temporal *AVLnode) *AVLnode{
-	temporal2 := temporal.izquierdo
-	temporal.izquierdo = temporal2.derecho
-	temporal2.derecho = temporal
-	temporal.Altura = avl.max(avl.altura(temporal.derecho), avl.altura(temporal.izquierdo))+1
-	temporal2.Altura = avl.max(avl.altura(temporal2.izquierdo), temporal.Altura)+1
+	temporal2 := temporal.Izquierdo
+	temporal.Izquierdo = temporal2.Derecho
+	temporal2.Derecho = temporal
+	temporal.Altura = avl.max(avl.altura(temporal.Derecho), avl.altura(temporal.Izquierdo))+1
+	temporal2.Altura = avl.max(avl.altura(temporal2.Izquierdo), temporal.Altura)+1
 	return temporal2
 }
 
 //Rotacion simple por la izquierda
 func (avl AVLTree) srr(temporal *AVLnode) *AVLnode{
-	temporal2:= temporal.derecho
-	temporal.derecho = temporal2.izquierdo
-	temporal2.izquierdo = temporal
-	temporal.Altura = avl.max(avl.altura(temporal.derecho), avl.altura(temporal.izquierdo))+1
-	temporal2.Altura = avl.max(avl.altura(temporal2.izquierdo), temporal.Altura)+1
+	temporal2:= temporal.Derecho
+	temporal.Derecho = temporal2.Izquierdo
+	temporal2.Izquierdo = temporal
+	temporal.Altura = avl.max(avl.altura(temporal.Derecho), avl.altura(temporal.Izquierdo))+1
+	temporal2.Altura = avl.max(avl.altura(temporal2.Izquierdo), temporal.Altura)+1
 	return temporal2
 }
 
 //Rotacion doble por la derecha
 func (avl AVLTree) drl(temporal *AVLnode) *AVLnode{
-	temporal.izquierdo = avl.srr(temporal.izquierdo)
+	temporal.Izquierdo = avl.srr(temporal.Izquierdo)
 	return avl.srl(temporal)
 }
 
 //Rotacion doble por la izquierda
 func (avl AVLTree) drr(temporal *AVLnode) *AVLnode{
-	temporal.derecho = avl.srl(temporal.derecho)
+	temporal.Derecho = avl.srl(temporal.Derecho)
 	return avl.srr(temporal)
 }
 
 //Funcion de impresion de nodos en orden
 func (avl AVLTree) enorden(temporal *AVLnode){
 	if temporal != nil{
-		avl.enorden(temporal.izquierdo)
+		avl.enorden(temporal.Izquierdo)
 		fmt.Print(temporal.Product.Codigo)
-		avl.enorden(temporal.derecho)
+		avl.enorden(temporal.Derecho)
 	}
 }
 
@@ -132,9 +132,9 @@ func (avl AVLTree) Buscar(producto Producto , temporal *AVLnode) bool{
 		if producto.Codigo == temporal.Product.Codigo{
 			return true
 		}else if producto.Codigo > temporal.Product.Codigo{
-			return avl.Buscar(producto, temporal.derecho)
+			return avl.Buscar(producto, temporal.Derecho)
 		}else{
-			return avl.Buscar(producto, temporal.izquierdo)
+			return avl.Buscar(producto, temporal.Izquierdo)
 		}
 	}
 	return false

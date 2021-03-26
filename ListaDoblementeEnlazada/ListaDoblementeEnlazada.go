@@ -167,3 +167,15 @@ func (Lista ListaDoblementeEnlazada) Imprimir(){
 		Lista.Tamano--
 	}
 }
+
+func(Lista ListaDoblementeEnlazada) GetArbol(nombre string) ArbolAVL.AVLTree{
+	aux := Lista.Cabeza
+	for aux.Dato.Nombre != nombre{
+
+		if aux.Siguiente == nil{
+			return ArbolAVL.AVLTree{}
+		}
+		aux = aux.Siguiente
+	}
+	return aux.Dato.Arbol
+}

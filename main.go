@@ -4,14 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/AdminJSON"
-	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ArbolAVL"
+	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/MatrizDispersa"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
 	"strconv"
 )
 var db AdminJSON.DB_VirtualMall
@@ -20,6 +22,7 @@ var dbpedidos MatrizDispersa.BD_Pedidos
 var lista []ListaDoblementeEnlazada.ListaDoblementeEnlazada
 var departamentos map[int]string
 var indices map[int]string
+var contador, numeromatriz int = 0,0
 
 //Muestra de datos
 //corregido
@@ -161,6 +164,7 @@ func getPosition(w http.ResponseWriter, r *http.Request){
 
 }
 func main() {
+
 	router := mux.NewRouter()
 	//Funcional
 	router.HandleFunc("/cargartienda", setJSON).Methods("POST")
@@ -171,6 +175,7 @@ func main() {
 	//Funcional
 	router.HandleFunc("/Tiendas", getJSON).Methods("GET")
 	//Funcional
+	//router.HandleFunc("/arbol", getImagenArbol).Methods("GET")
 	router.HandleFunc("/Eliminar", eliminar).Methods("DELETE")
 	//Funcional
 	router.HandleFunc("/TiendaEspecifica", getTiendaEspecifica).Methods("POST")
@@ -238,4 +243,88 @@ func del(tienda ListaDoblementeEnlazada.TiendaEliminar){
 		}
 
 	}
+}
+
+func GetImagenArbol(a ArbolAVL.AVLnode){
+	//Generamos el archivo dot
+	data := []byte(createDot(&a))
+	err := ioutil.WriteFile("grafo.dot", data, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//Generamos la imagen
+	app := "crearGrafo.bat"
+	_, err2 := exec.Command(app).Output()
+	if err2 != nil {
+		fmt.Println("errrooor :(")
+		fmt.Println(err2)
+	} else {
+		fmt.Println("Todo bien")
+	}
+	//abrimos la imagen
+	img, err3 := os.Open("./grafo.png")
+	if err3 != nil {
+		log.Fatal(err3) // perhaps handle this nicer
+	}
+	defer img.Close()
+	//devolvemos como respuesta la imagen
+
+}
+
+func createDot(nodo* ArbolAVL.AVLnode) string{
+	var grafo string
+	grafo="digraph G{\n"
+	grafo+="graph [compound=true, labelloc=\"b\"];\n"
+	grafo+=`Nodo0[shape=none label=<
+	`
+	grafo+=`<table cellspacing="0" border="0" cellborder="1">`
+	grafo+="<tr><td colspan=\"2\">Nombre: "+ nodo.Product.Nombre+" </td></tr>"
+	grafo+="<tr><td>Carnet: "+strconv.FormatInt(int64(nodo.Product.Codigo), 10)+"</td><td>CUI: "+strconv.FormatInt(int64(nodo.Product.Precio), 10)+"</td></tr>"
+	grafo+="<tr><td colspan=\"2\">Correo: "+nodo.Product.Descripcion+"</td></tr></table>"
+	grafo+=`
+	>];
+	`
+	contador=1
+	grafo=recorrerArbol("Nodo0", nodo, grafo)
+	grafo+="}"
+	return grafo
+	//fmt.Println(grafo)
+}
+
+func recorrerArbol(nombrePadre string, hijo* ArbolAVL.AVLnode, textoActual string) string{
+	if hijo. Izquierdo!=nil{
+		nombreHijo := "Nodo"
+		nombreHijo+=strconv.FormatInt(int64(contador), 10)
+		contador+=1
+		textoActual+=nombreHijo
+		textoActual+=`[shape=none label=<
+		`
+		textoActual+=`<table cellspacing="0" border="0" cellborder="1">`
+		textoActual+="<tr><td colspan=\"2\">Nombre: "+ hijo.Izquierdo.Product.Nombre+"</td></tr>"
+		textoActual+="<tr><td>Carnet: "+strconv.FormatInt(int64(hijo.Izquierdo.Product.Codigo), 10)+"</td><td>CUI: "+strconv.FormatInt(int64(hijo.Izquierdo.Product.Precio), 10)+"</td></tr>"
+		textoActual+="<tr><td colspan=\"2\">Correo: "+hijo.Izquierdo.Product.Descripcion+"</td></tr></table>"
+		textoActual+=`
+		>];
+		`
+		textoActual+=nombrePadre+"->"+nombreHijo+";\n"
+		textoActual=recorrerArbol(nombreHijo,hijo.Izquierdo, textoActual)
+	}
+	if hijo.Derecho!=nil{
+		nombreHijo := "Nodo"
+		nombreHijo+=strconv.FormatInt(int64(contador), 10)
+		contador+=1
+		textoActual+=nombreHijo
+		textoActual+=`[shape=none label=<
+		`
+		textoActual+=`<table cellspacing="0" border="0" cellborder="1">`
+		textoActual+="<tr><td colspan=\"2\">Nombre: "+ hijo.Derecho.Product.Nombre+"</td></tr>"
+		textoActual+="<tr><td>Carnet: "+strconv.FormatInt(int64(hijo.Derecho.Product.Codigo), 10)+"</td><td>CUI: "+strconv.FormatInt(int64(hijo.Derecho.Product.Precio), 10)+"</td></tr>"
+		textoActual+="<tr><td colspan=\"2\">Correo: "+hijo.Derecho.Product.Descripcion+"</td></tr></table>"
+		textoActual+=`
+		>];
+		`
+		textoActual+=nombrePadre+"->"+nombreHijo+";\n"
+		textoActual=recorrerArbol(nombreHijo,hijo.Derecho, textoActual)
+	}
+	return textoActual
 }

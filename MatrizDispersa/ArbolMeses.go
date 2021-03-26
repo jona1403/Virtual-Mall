@@ -52,6 +52,19 @@ func (avl Arbol) add2(matriz Matriz, mes int, temporal *node) *node{
 	return temporal
 }
 
+func (avl Arbol) SearchMeses(mes int, temporal *node) bool{
+	if temporal != nil{
+		if temporal.mes == mes {
+			return true
+		}else if mes > temporal.mes{
+			return avl.SearchMeses(mes, temporal.derecha)
+		}else{
+			return avl.SearchMeses(mes, temporal.izquierda)
+		}
+	}
+	return false
+}
+
 func (avl Arbol) srl(temp *node) *node{
 	temp2 := temp.izquierda
 	temp.izquierda = temp2.derecha

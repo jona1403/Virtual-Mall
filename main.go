@@ -163,9 +163,16 @@ func getPosition(w http.ResponseWriter, r *http.Request){
 	}
 
 }
+func getUsiariosMasivos(w http.ResponseWriter, r *http.Request){}
+func getUsiario(w http.ResponseWriter, r *http.Request){}
+func delUsuario(w http.ResponseWriter, r*http.Request){}
+
 func main() {
 
 	router := mux.NewRouter()
+	router.HandleFunc("/Delusuario", delUsuario).Methods("POST")
+	router.HandleFunc("/CargarUsuarios", getUsiariosMasivos).Methods("GET")
+	router.HandleFunc("/CargarUsuario", getUsiario).Methods("GET")
 	//Funcional
 	router.HandleFunc("/cargartienda", setJSON).Methods("POST")
 	//Funcional

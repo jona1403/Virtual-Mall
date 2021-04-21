@@ -12,6 +12,8 @@ import { CargarproductosComponent } from './componentes/cargarproductos/cargarpr
 import { VerproductosComponent } from './componentes/verproductos/verproductos.component';
 import { CargarpedidosComponent } from './componentes/cargarpedidos/cargarpedidos.component';
 import { VerpedidoComponent } from './componentes/verpedido/verpedido.component';
+import { CrearUsuarioComponent } from './componentes/crear-usuario/crear-usuario.component';
+import { CargarusuariosComponent } from './componentes/cargarusuarios/cargarusuarios.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { VerpedidoComponent } from './componentes/verpedido/verpedido.component'
     CargarproductosComponent,
     VerproductosComponent,
     CargarpedidosComponent,
-    VerpedidoComponent
+    VerpedidoComponent,
+    CrearUsuarioComponent,
+    CargarusuariosComponent
   ],
   imports: [
     BrowserModule, 

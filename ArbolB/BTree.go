@@ -27,12 +27,31 @@ type ArbolB struct{
 	Enmedio int
 }
 
+//Funciones de los nodos o paginas
 func (nodo *Nodo) insertar(usuario User){
 	nodo.Claves[nodo.Cantidad] = usuario
 	nodo.Cantidad++
 	if nodo.Cantidad > 1{
 		nodo.Claves = sort(nodo.Claves)
 	}
+}
+
+func (nodo Nodo) PosNodo() int{
+	for i:= 0; i<5; i++{
+		if *nodo.Padre.Hijos[i] == nodo{
+			return i
+		}
+	}
+	return -1
+}
+
+func (nodo Nodo) buscar(usuario User, Usuarios [5]User)(bool){
+	for i:= 0; i<5;i++{
+		if usuario.Dpi == Usuarios[i].Dpi{
+			return true
+		}
+	}
+	return false
 }
 
 func sort(array [5]User)([5]User){
@@ -48,6 +67,10 @@ func sort(array [5]User)([5]User){
 	}
 	return array
 }
+
+
+//funciones del arbol
+
 
 func (arbol *ArbolB) insertar(nuevo User){
 arbol.Raiz = arbol._insertar(nuevo, arbol.Raiz)

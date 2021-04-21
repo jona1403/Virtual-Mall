@@ -7,8 +7,10 @@ import (
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ArbolAVL"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/ListaDoblementeEnlazada"
 	"github.com/VirtualMall/ListaDoblementeEnlazada/MatrizDispersa"
+	"github.com/VirtualMall/ListaDoblementeEnlazada/ArbolB"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,6 +19,8 @@ import (
 	"strconv"
 )
 var db AdminJSON.DB_VirtualMall
+var dbUsuarios ArbolB.DB_Users
+var arbolb ArbolB.ArbolB
 var dbproductos ArbolAVL.BD_Inventarios
 var dbpedidos MatrizDispersa.BD_Pedidos
 var lista []ListaDoblementeEnlazada.ListaDoblementeEnlazada
@@ -163,16 +167,54 @@ func getPosition(w http.ResponseWriter, r *http.Request){
 	}
 
 }
-func getUsiariosMasivos(w http.ResponseWriter, r *http.Request){}
+func getUsiariosMasivos(w http.ResponseWriter, r *http.Request){
+	Usuarios, err := ioutil.ReadAll(r.Body)
+	if err != nil{
+		fmt.Fprintf(w, "Datos no validos")
+	}
+	json.Unmarshal([]byte(Usuarios), &dbUsuarios)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	//fmt.Println(dbproductos)
+	//lista = AdminJSON.AgregarProducto(dbproductos, lista, departamentos, indices)
+	Ab := ArbolB.Insercionmasiva(dbUsuarios)
+	arbolb = Ab
+	json.NewEncoder(w).Encode("Datos cargados")
+}
 func getUsiario(w http.ResponseWriter, r *http.Request){}
 func delUsuario(w http.ResponseWriter, r*http.Request){}
+func getAB(w http.ResponseWriter, r*http.Request){
+	data := []byte(ArbolB.CreateDot(arbolb.Raiz))
+	err := ioutil.WriteFile("grafo.dot", data, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//Generamos la imagen
+	app := "crearGrafo.bat"
+	_, err2 := exec.Command(app).Output()
+	if err2 != nil {
+		fmt.Println("error al generar imagen")
+		fmt.Println(err2)
+	} else {
+		fmt.Println("Imagen creada con exito")
+	}
+	img, err3 := os.Open("./grafo.png")
+	if err3 != nil {
+		log.Fatal(err3) // perhaps handle this nicer
+	}
+	defer img.Close()
+	w.Header().Set("Content-Type", "image/png")
+	io.Copy(w, img)
+}
+
 
 func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/Delusuario", delUsuario).Methods("POST")
-	router.HandleFunc("/CargarUsuarios", getUsiariosMasivos).Methods("GET")
-	router.HandleFunc("/CargarUsuario", getUsiario).Methods("GET")
+	router.HandleFunc("/CargarUsuarios", getUsiariosMasivos).Methods("POST")
+	router.HandleFunc("/CargarUsuario", getUsiario).Methods("POST")
+	router.HandleFunc("/imagenAB", getAB).Methods("GET")
 	//Funcional
 	router.HandleFunc("/cargartienda", setJSON).Methods("POST")
 	//Funcional

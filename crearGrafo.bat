@@ -1,0 +1,1 @@
+"C:\Program Files\Graphviz\bin\dot.exe" -Tpng grafo.dot -o grafo.png

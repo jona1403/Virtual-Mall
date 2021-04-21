@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { UsuariosService } from "../../services/usuarios/usuarios.service";
 
 @Component({
   selector: 'app-cargarusuarios',
@@ -11,7 +12,7 @@ export class CargarusuariosComponent implements OnInit {
   usuarios = new FormControl('')
   mostrarMensaje = false
   mostrarMensajeError = false
-  constructor() { }
+  constructor(private usuariosservice: UsuariosService) { }
 
   ngOnInit(): void {
   }
@@ -19,13 +20,13 @@ export class CargarusuariosComponent implements OnInit {
   cargarusuarios(){
     const p: JSON =  JSON.parse(this.usuarios.value);
     //const p: Bdinventario = new Bdinventario(this.productos.value);
-    /*this.pedidosservice.postPedidos(p).subscribe((res: any) =>{
+    this.usuariosservice.postUsuarios(p).subscribe((res: any) =>{
       this.mostrarMensaje = true;
       this.usuarios.setValue("");
     }, (err) => {
       this.mostrarMensajeError = true;
     }
-    )*/
+    )
   }
 
   desactivarMensaje(){

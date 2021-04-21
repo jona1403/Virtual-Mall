@@ -9,4 +9,14 @@ import { Observable } from 'rxjs';
 export class UsuariosService {
 
   constructor(private http: HttpClient) { }
+
+  postUsuarios(Usuarios): Observable<any>{
+    const httpOptions = {
+      headers : new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+    };
+    return this.http.post<any>(baseURL+'CargarUsuarios', Usuarios, httpOptions)
+  }
+
 }

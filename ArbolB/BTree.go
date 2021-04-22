@@ -2,7 +2,6 @@ package ArbolB
 
 import (
 	"crypto/hmac"
-	"crypto/md5"
 	"crypto/sha256"
 	"encoding/hex"
 	"strconv"
@@ -106,9 +105,9 @@ func recorrerArbol(nombrePadre string, hijo* Nodo, textoActual string) string{
 		if hijo.Claves[i].Dpi != 0{
 			textoActual += "<td>DPI: "+strconv.FormatInt(int64(hijo.Claves[i].Dpi), 10)+"<br/>"
 			textoActual += "Nombre: "+hijo.Claves[i].Nombre+"<br/>"
-			textoActual += "Correo"+hijo.Claves[i].Correo+"<br/>"
-			textoActual += "Password"+hijo.Claves[i].Password+"<br/>"
-			textoActual += "Cuenta"+hijo.Claves[i].Cuenta+"<br/></td>"
+			textoActual += "Correo: "+hijo.Claves[i].Correo+"<br/>"
+			textoActual += "Password: "+hijo.Claves[i].Password+"<br/>"
+			textoActual += "Cuenta: "+hijo.Claves[i].Cuenta+"<br/></td>"
 		}else{
 			break
 		}
@@ -140,9 +139,9 @@ func CreateDot(nodo* Nodo) string{
 		if nodo.Claves[i].Dpi != 0{
 			grafo += "<td>DPI: "+strconv.FormatInt(int64(nodo.Claves[i].Dpi), 10)+"<br/>"
 			grafo += "Nombre: "+nodo.Claves[i].Nombre+"<br/>"
-			grafo += "Correo"+nodo.Claves[i].Correo+"<br/>"
-			grafo += "Password"+nodo.Claves[i].Password+"<br/>"
-			grafo += "Cuenta"+nodo.Claves[i].Cuenta+"<br/></td>"
+			grafo += "Correo: "+nodo.Claves[i].Correo+"<br/>"
+			grafo += "Password: "+nodo.Claves[i].Password+"<br/>"
+			grafo += "Cuenta: "+nodo.Claves[i].Cuenta+"<br/></td>"
 		}else{
 			break
 		}
@@ -165,18 +164,7 @@ func CreateDot(nodo* Nodo) string{
 	return grafo
 }
 
-func createen(clave string) string{
-	encr := md5.New()
-	encr.Write([]byte(clave))
-	return hex.EncodeToString(encr.Sum(nil))
-}
-
 func encriptar(datos []byte, conn string) string{
-	/*b, _ := aes.NewCipher([]byte(createen(conn)))
-	h, _ := cipher.NewGCM(b)
-	o := make([]byte, h.NonceSize())
-	io.ReadFull(rand.Reader, o)
-	textocifrado := h.Seal(o, o, datos, nil)*/
 	h:= hmac.New(sha256.New, []byte(conn))
 	h.Write(datos)
 	sha := hex.EncodeToString(h.Sum(nil))
@@ -193,21 +181,21 @@ func recorrerArbolcifrado(nombrePadre string, hijo* Nodo, textoActual string, pa
 	for i:=0; i<5; i++{
 		if hijo.Claves[i].Dpi != 0{
 			texto := encriptar([]byte(strconv.FormatInt(int64(hijo.Claves[i].Dpi), 10)), password)
-			textoActual += "<td>DPI: "+string(texto)+"<br/>"
+			textoActual += "<td>DPI: "+texto+"<br/>"
 
 			texto = encriptar([]byte(hijo.Claves[i].Correo), password)
-			textoActual += "Correo"+string(texto)+"<br/>"
+			textoActual += "Correo: "+texto+"<br/>"
 			texto = encriptar([]byte(hijo.Claves[i].Password), password)
-			textoActual += "Password"+string(texto)+"<br/>"
+			textoActual += "Password: "+texto+"<br/>"
 
 			if tipo == 1{
 				texto = encriptar([]byte(hijo.Claves[i].Nombre), password)
-				textoActual += "Nombre: "+string(texto)+"<br/>"
+				textoActual += "Nombre: "+texto+"<br/>"
 				texto = encriptar([]byte(hijo.Claves[i].Cuenta), password)
-				textoActual += "Cuenta"+string(texto)+"<br/></td>"
+				textoActual += "Cuenta: "+texto+"<br/></td>"
 			}else{
 				textoActual += "Nombre: "+hijo.Claves[i].Nombre+"<br/>"
-				textoActual += "Cuenta"+hijo.Claves[i].Cuenta+"<br/></td>"
+				textoActual += "Cuenta: "+hijo.Claves[i].Cuenta+"<br/></td>"
 			}
 		}else{
 			break
@@ -239,20 +227,20 @@ func CreateDotcifrado(nodo *Nodo, password string, tipo int) string{
 	for i:=0; i<5; i++{
 		if nodo.Claves[i].Dpi != 0{
 			texto := encriptar([]byte(strconv.FormatInt(int64(nodo.Claves[i].Dpi), 10)), password)
-			grafo += "<td>DPI: "+string(texto)+"<br/>"
+			grafo += "<td>DPI: "+texto+"<br/>"
 
 			texto = encriptar([]byte(nodo.Claves[i].Correo), password)
-			grafo += "Correo"+string(texto)+"<br/>"
+			grafo += "Correo: "+texto+"<br/>"
 			texto = encriptar([]byte(nodo.Claves[i].Password), password)
-			grafo += "Password"+string(texto)+"<br/>"
+			grafo += "Password: "+texto+"<br/>"
 			if tipo == 1{
 				texto = encriptar([]byte(nodo.Claves[i].Nombre), password)
-				grafo += "Nombre: "+string(texto)+"<br/>"
+				grafo += "Nombre: "+texto+"<br/>"
 				texto = encriptar([]byte(nodo.Claves[i].Cuenta), password)
-				grafo += "Cuenta"+string(texto)+"<br/></td>"
+				grafo += "Cuenta: "+texto+"<br/></td>"
 			}else{
 				grafo += "Nombre: "+nodo.Claves[i].Nombre+"<br/>"
-				grafo += "Cuenta"+nodo.Claves[i].Cuenta+"<br/></td>"
+				grafo += "Cuenta: "+nodo.Claves[i].Cuenta+"<br/></td>"
 			}
 		}else{
 			break

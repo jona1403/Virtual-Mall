@@ -79,7 +79,6 @@ func setPedidos(w http.ResponseWriter, r *http.Request){
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	//lista, departamentos, indices = AdminJSON.Linealizacion(dbpedidos)
 	json.NewEncoder(w).Encode("Datos cargados")
 }
 

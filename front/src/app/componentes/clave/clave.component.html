@@ -1,7 +1,7 @@
 <div *ngIf="mostrarMensaje" class="row justify-content-around">
     <div class="col-md-5">
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Usuario creado correctamente
+            Clave enviada exitosamente
             <button type="button" (click)="desactivarMensaje()" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -11,7 +11,7 @@
 <div *ngIf="mostrarMensajeError" class="row justify-content-around">
     <div class="col-md-5">
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            No se pudo crear el usuario
+            Error al enviar clave
             <button type="button" (click)="desactivarMensaje()" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -29,36 +29,19 @@
                 <div class="col-lg-6">
                     <div class="p-5">
                         <div class="text-center">
-                            <h4 class="text-dark mb-4">Crear Usuario</h4>
+                            <h4 class="text-dark mb-4">Clave para encriptar</h4>
                         </div>
                         <form class="user">
-                            <div class="form-group row">
-                                <div class="col-sm-6 mb-3 mb-sm-0"><input [formControl]="dpi" class="form-control form-control-user"
-                                        type="text" id="exampleFirstName" placeholder="DPI" name="dpi">
-                                </div>
-                                <div class="col-sm-6"><input [formControl]="nombre" class="form-control form-control-user" type="text"
-                                        id="exampleFirstName" placeholder="Nombre" name="nombre"></div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm-6">
-                                    <input [formControl]="correo" class="form-control form-control-user" type="email" id="correo"
-                                        placeholder="Correo" name="Correo">
-                                </div>
-                                <div class="col-sm-6">
-                                    <input [formControl]="password" class="form-control form-control-user" type="password" id="password"
-                                        placeholder="Password" name="password">
-                                </div>
-                            </div>
+                            
                             <div class="form-group row">
                                 <div class="col-sm-12">
-                                    <input [formControl]="cuenta" class="form-control form-control-user" type="text" id="cuenta"
-                                        aria-describedby="emailHelp" placeholder="Cuenta" name="cuenta">
+                                    <input [formControl]="clave" class="form-control form-control-user" type="text" id="clave"
+                                        aria-describedby="clave" placeholder="Clave" name="Clave">
                                 </div>
                             </div>
                             <div class="row justify-content-center">
                                 <div class="col-sm-6">
-                                    <button (click)="crearusuario()" class="btn btn-primary btn-block text-white btn-user" type="submit">Registrar
-                                        Usuario</button>
+                                    <button (click)="enviarclave()" class="btn btn-primary btn-block text-white btn-user" type="submit">Enviar clave</button>
                                 </div>
                             </div>
                         </form>

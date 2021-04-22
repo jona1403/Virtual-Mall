@@ -28,6 +28,10 @@ var departamentos map[int]string
 var indices map[int]string
 var contador, numeromatriz int = 0,0
 
+type code struct{
+	cla string
+}
+
 //Muestra de datos
 //corregido
 func getJSON(w http.ResponseWriter, r *http.Request){
@@ -66,9 +70,9 @@ func setproductos(w http.ResponseWriter, r *http.Request){
 }
 
 func setPedidos(w http.ResponseWriter, r *http.Request){
-	Pedidos, err := ioutil.ReadAll(r.Body)
+	Pedidos, errr := ioutil.ReadAll(r.Body)
 
-	if err != nil{
+	if errr != nil{
 		fmt.Fprintf(w, "Datos no validos")
 	}
 	json.Unmarshal([]byte(Pedidos), &dbpedidos)
@@ -216,6 +220,39 @@ func getAB(w http.ResponseWriter, r*http.Request){
 	w.Header().Set("Content-Type", "image/png")
 	io.Copy(w, img)
 }
+func getkey(w http.ResponseWriter, r*http.Request){
+	var c code
+	clave, errr := ioutil.ReadAll(r.Body)
+
+	if errr != nil{
+		fmt.Fprintf(w, "Datos no validos")
+	}
+	json.Unmarshal([]byte(clave), &c)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+
+
+	data := []byte(ArbolB.CreateDotcifrado(arbolb.Raiz, c.cla, 1))
+	data2 := []byte(ArbolB.CreateDotcifrado(arbolb.Raiz, c.cla, 2))
+	err1 := ioutil.WriteFile("grafocif.dot", data, 0644)
+	err2 := ioutil.WriteFile("grafosens.dot", data2, 0644)
+	if err1 != nil {
+		log.Fatal(err1)
+	}
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+	app := "creargrafosencript.bat"
+	_, err4 := exec.Command(app).Output()
+	if err4 != nil {
+		fmt.Println("error al generar imagen")
+		fmt.Println(err4)
+	} else {
+		fmt.Println("Imagen creada con exito")
+	}
+
+}
 
 
 func main() {
@@ -225,6 +262,7 @@ func main() {
 	router.HandleFunc("/CargarUsuarios", getUsiariosMasivos).Methods("POST")
 	router.HandleFunc("/CargarUsuario", getUsuario).Methods("POST")
 	router.HandleFunc("/imagenAB", getAB).Methods("GET")
+	router.HandleFunc("/Encriptar", getkey).Methods("POST")
 	//Funcional
 	router.HandleFunc("/cargartienda", setJSON).Methods("POST")
 	//Funcional

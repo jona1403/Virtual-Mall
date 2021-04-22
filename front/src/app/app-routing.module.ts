@@ -10,7 +10,12 @@ import { InicioComponent } from './componentes/inicio/inicio.component';
 import { CargarpedidosComponent } from "./componentes/cargarpedidos/cargarpedidos.component";
 import { VerpedidoComponent } from "./componentes/verpedido/verpedido.component";
 import { CargarproductosComponent } from './componentes/cargarproductos/cargarproductos.component';
+import { ClaveComponent } from './componentes/clave/clave.component';
 const routes: Routes = [
+    {
+        path: 'clave',
+        component:ClaveComponent,
+    },
     {
         path: 'cargarusuarios',
         component:CargarusuariosComponent,

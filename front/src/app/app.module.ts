@@ -14,6 +14,7 @@ import { CargarpedidosComponent } from './componentes/cargarpedidos/cargarpedido
 import { VerpedidoComponent } from './componentes/verpedido/verpedido.component';
 import { CrearUsuarioComponent } from './componentes/crear-usuario/crear-usuario.component';
 import { CargarusuariosComponent } from './componentes/cargarusuarios/cargarusuarios.component';
+import { ClaveComponent } from './componentes/clave/clave.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { CargarusuariosComponent } from './componentes/cargarusuarios/cargarusua
     CargarpedidosComponent,
     VerpedidoComponent,
     CrearUsuarioComponent,
-    CargarusuariosComponent
+    CargarusuariosComponent,
+    ClaveComponent
   ],
   imports: [
     BrowserModule, 

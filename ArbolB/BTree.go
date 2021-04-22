@@ -1,6 +1,10 @@
 package ArbolB
 
 import (
+	"crypto/hmac"
+	"crypto/md5"
+	"crypto/sha256"
+	"encoding/hex"
 	"strconv"
 )
 
@@ -160,6 +164,118 @@ func CreateDot(nodo* Nodo) string{
 	grafo+="}"
 	return grafo
 }
+
+func createen(clave string) string{
+	encr := md5.New()
+	encr.Write([]byte(clave))
+	return hex.EncodeToString(encr.Sum(nil))
+}
+
+func encriptar(datos []byte, conn string) string{
+	/*b, _ := aes.NewCipher([]byte(createen(conn)))
+	h, _ := cipher.NewGCM(b)
+	o := make([]byte, h.NonceSize())
+	io.ReadFull(rand.Reader, o)
+	textocifrado := h.Seal(o, o, datos, nil)*/
+	h:= hmac.New(sha256.New, []byte(conn))
+	h.Write(datos)
+	sha := hex.EncodeToString(h.Sum(nil))
+	return sha
+}
+
+func recorrerArbolcifrado(nombrePadre string, hijo* Nodo, textoActual string, password string, tipo int) string{
+	nombrehijo := "Nodo"+strconv.FormatInt(int64(contador), 10)
+	contador++
+	textoActual+= nombrehijo
+	textoActual +=`[shape=none label=<`
+	textoActual+=`<table cellspacing="0" border="0" cellborder="1">`
+	textoActual+= "<tr>"
+	for i:=0; i<5; i++{
+		if hijo.Claves[i].Dpi != 0{
+			texto := encriptar([]byte(strconv.FormatInt(int64(hijo.Claves[i].Dpi), 10)), password)
+			textoActual += "<td>DPI: "+string(texto)+"<br/>"
+
+			texto = encriptar([]byte(hijo.Claves[i].Correo), password)
+			textoActual += "Correo"+string(texto)+"<br/>"
+			texto = encriptar([]byte(hijo.Claves[i].Password), password)
+			textoActual += "Password"+string(texto)+"<br/>"
+
+			if tipo == 1{
+				texto = encriptar([]byte(hijo.Claves[i].Nombre), password)
+				textoActual += "Nombre: "+string(texto)+"<br/>"
+				texto = encriptar([]byte(hijo.Claves[i].Cuenta), password)
+				textoActual += "Cuenta"+string(texto)+"<br/></td>"
+			}else{
+				textoActual += "Nombre: "+hijo.Claves[i].Nombre+"<br/>"
+				textoActual += "Cuenta"+hijo.Claves[i].Cuenta+"<br/></td>"
+			}
+		}else{
+			break
+		}
+	}
+	textoActual+= "</tr>"
+	textoActual+="</table>"
+	textoActual+=`
+	>];
+	`
+	textoActual+=nombrePadre+"->"+nombrehijo+";\n"
+	for i:= 0; i<6; i++{
+		if hijo.Hijos[i] != nil{
+			textoActual=recorrerArbolcifrado(nombrehijo, hijo.Hijos[i], textoActual, password, tipo)
+		}else{
+			break
+		}
+	}
+	return textoActual
+}
+
+func CreateDotcifrado(nodo *Nodo, password string, tipo int) string{
+	var grafo string
+	grafo="digraph G{\n"
+	grafo+="graph [compound=true, labelloc=\"b\"];\n"
+	grafo+=`Nodo0[shape=none label=<`
+	grafo+=`<table cellspacing="0" border="0" cellborder="1">`
+	grafo+= "<tr>"
+	for i:=0; i<5; i++{
+		if nodo.Claves[i].Dpi != 0{
+			texto := encriptar([]byte(strconv.FormatInt(int64(nodo.Claves[i].Dpi), 10)), password)
+			grafo += "<td>DPI: "+string(texto)+"<br/>"
+
+			texto = encriptar([]byte(nodo.Claves[i].Correo), password)
+			grafo += "Correo"+string(texto)+"<br/>"
+			texto = encriptar([]byte(nodo.Claves[i].Password), password)
+			grafo += "Password"+string(texto)+"<br/>"
+			if tipo == 1{
+				texto = encriptar([]byte(nodo.Claves[i].Nombre), password)
+				grafo += "Nombre: "+string(texto)+"<br/>"
+				texto = encriptar([]byte(nodo.Claves[i].Cuenta), password)
+				grafo += "Cuenta"+string(texto)+"<br/></td>"
+			}else{
+				grafo += "Nombre: "+nodo.Claves[i].Nombre+"<br/>"
+				grafo += "Cuenta"+nodo.Claves[i].Cuenta+"<br/></td>"
+			}
+		}else{
+			break
+		}
+	}
+	grafo+= "</tr>"
+	grafo+="</table>"
+	grafo+=`
+	>];
+	`
+	contador = 1
+	for i:= 0; i<6; i++{
+		if nodo.Hijos[i] != nil{
+			grafo=recorrerArbolcifrado("Nodo0", nodo.Hijos[i], grafo, password, tipo)
+		}else{
+			break
+		}
+	}
+
+	grafo+="}"
+	return grafo
+}
+
 
 func (arbol ArbolB) _insertar(nuevo User, temp *Nodo) (*Nodo){
 	if temp.Hijos[0] == nil{

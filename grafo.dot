@@ -1,0 +1,5 @@
+digraph G{
+graph [compound=true, labelloc="b"];
+Nodo0[shape=none label=<<table cellspacing="0" border="0" cellborder="1"><tr><td>DPI: 1<br/>Nombre: Hola<br/>Correohola@gmail.com<br/>Passwordasdasds<br/>CuentaUsuario<br/></td></tr></table>
+	>];
+	}

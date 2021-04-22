@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Usuario } from '../../models/usuario/usuario';
+import { UsuarioService } from '../../services/usuario/usuario.service';
 
 @Component({
   selector: 'app-crear-usuario',
@@ -14,20 +16,30 @@ export class CrearUsuarioComponent implements OnInit {
   cuenta = new FormControl('')
   mostrarMensaje = false
   mostrarMensajeError = false
-  constructor() { }
+  constructor(private usuarioservicio: UsuarioService) { }
 
   ngOnInit(): void {
   }
   crearusuario(){
-    /*const p: JSON =  JSON.parse(this.usuarios.value);
-    //const p: Bdinventario = new Bdinventario(this.productos.value);
-    this.pedidosservice.postPedidos(p).subscribe((res: any) =>{
+    const p: Usuario={
+      Dpi : Number(this.dpi.value),
+      Nombre : this.nombre.value,
+      Correo : this.correo.value,
+      Password : this.password.value,
+      Cuenta : this.cuenta.value
+    }
+    
+    this.usuarioservicio.postUsuario(p).subscribe((res: any) =>{
       this.mostrarMensaje = true;
-      this.usuarios.setValue("");
+      this.dpi.setValue("");
+      this.nombre.setValue("");
+      this.correo.setValue("");
+      this.password.setValue("");
+      this.cuenta.setValue("");
     }, (err) => {
       this.mostrarMensajeError = true;
     }
-    )*/
+    )
   }
 
   desactivarMensaje(){

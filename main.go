@@ -20,7 +20,7 @@ import (
 )
 var db AdminJSON.DB_VirtualMall
 var dbUsuarios ArbolB.DB_Users
-var arbolb ArbolB.ArbolB
+var arbolb  ArbolB.ArbolB = ArbolB.ArbolB{Raiz: &ArbolB.Nodo{Padre: nil, Hijos: [6]*ArbolB.Nodo{}, Claves: [5]ArbolB.User{}, Hoja: true, Cantidad: 0}, Grado: 5, Enmedio: 2}
 var dbproductos ArbolAVL.BD_Inventarios
 var dbpedidos MatrizDispersa.BD_Pedidos
 var lista []ListaDoblementeEnlazada.ListaDoblementeEnlazada
@@ -167,6 +167,7 @@ func getPosition(w http.ResponseWriter, r *http.Request){
 	}
 
 }
+
 func getUsiariosMasivos(w http.ResponseWriter, r *http.Request){
 	Usuarios, err := ioutil.ReadAll(r.Body)
 	if err != nil{
@@ -175,13 +176,22 @@ func getUsiariosMasivos(w http.ResponseWriter, r *http.Request){
 	json.Unmarshal([]byte(Usuarios), &dbUsuarios)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	//fmt.Println(dbproductos)
-	//lista = AdminJSON.AgregarProducto(dbproductos, lista, departamentos, indices)
-	Ab := ArbolB.Insercionmasiva(dbUsuarios)
+	Ab := ArbolB.Insercionmasiva(dbUsuarios, arbolb)
 	arbolb = Ab
 	json.NewEncoder(w).Encode("Datos cargados")
 }
-func getUsiario(w http.ResponseWriter, r *http.Request){}
+func getUsuario(w http.ResponseWriter, r *http.Request){
+	user := ArbolB.User{}
+	Usuario, err := ioutil.ReadAll(r.Body)
+	if err != nil{
+		fmt.Fprintf(w, "Datos no validos")
+	}
+	json.Unmarshal([]byte(Usuario), &user)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	arbolb.Insertar(user)
+	json.NewEncoder(w).Encode("Datos cargados")
+}
 func delUsuario(w http.ResponseWriter, r*http.Request){}
 func getAB(w http.ResponseWriter, r*http.Request){
 	data := []byte(ArbolB.CreateDot(arbolb.Raiz))
@@ -213,7 +223,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/Delusuario", delUsuario).Methods("POST")
 	router.HandleFunc("/CargarUsuarios", getUsiariosMasivos).Methods("POST")
-	router.HandleFunc("/CargarUsuario", getUsiario).Methods("POST")
+	router.HandleFunc("/CargarUsuario", getUsuario).Methods("POST")
 	router.HandleFunc("/imagenAB", getAB).Methods("GET")
 	//Funcional
 	router.HandleFunc("/cargartienda", setJSON).Methods("POST")

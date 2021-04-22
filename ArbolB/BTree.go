@@ -100,7 +100,11 @@ func recorrerArbol(nombrePadre string, hijo* Nodo, textoActual string) string{
 	textoActual+= "<tr>"
 	for i:=0; i<5; i++{
 		if hijo.Claves[i].Dpi != 0{
-			textoActual += "<td>"+strconv.FormatInt(int64(hijo.Claves[i].Dpi), 10)+"</td>"
+			textoActual += "<td>DPI: "+strconv.FormatInt(int64(hijo.Claves[i].Dpi), 10)+"<br/>"
+			textoActual += "Nombre: "+hijo.Claves[i].Nombre+"<br/>"
+			textoActual += "Correo"+hijo.Claves[i].Correo+"<br/>"
+			textoActual += "Password"+hijo.Claves[i].Password+"<br/>"
+			textoActual += "Cuenta"+hijo.Claves[i].Cuenta+"<br/></td>"
 		}else{
 			break
 		}
@@ -130,7 +134,11 @@ func CreateDot(nodo* Nodo) string{
 	grafo+= "<tr>"
 	for i:=0; i<5; i++{
 		if nodo.Claves[i].Dpi != 0{
-			grafo += "<td>"+strconv.FormatInt(int64(nodo.Claves[i].Dpi), 10)+"</td>"
+			grafo += "<td>DPI: "+strconv.FormatInt(int64(nodo.Claves[i].Dpi), 10)+"<br/>"
+			grafo += "Nombre: "+nodo.Claves[i].Nombre+"<br/>"
+			grafo += "Correo"+nodo.Claves[i].Correo+"<br/>"
+			grafo += "Password"+nodo.Claves[i].Password+"<br/>"
+			grafo += "Cuenta"+nodo.Claves[i].Cuenta+"<br/></td>"
 		}else{
 			break
 		}
@@ -240,7 +248,9 @@ func (arbol ArbolB) _insertar(nuevo User, temp *Nodo) (*Nodo){
 	return temp
 }
 
-func Insercionmasiva(db DB_Users) ArbolB{
-	Ab := ArbolB{Raiz: &Nodo{Padre: nil, Hijos: [6]*Nodo{}, Claves: [5]User{}, Hoja: true, Cantidad: 0}, Grado: 5, Enmedio: 2}
+func Insercionmasiva(db DB_Users, Ab ArbolB) ArbolB{
+	for i:= 0; i< len(db.Usuarios); i++{
+		Ab.Insertar(db.Usuarios[i])
+	}
 	return Ab
 }
